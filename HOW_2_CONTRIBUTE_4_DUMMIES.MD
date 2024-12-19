@@ -8,7 +8,7 @@
 
 1. **Получите скрипт**  
    - Скачайте скрипт напрямую из репозитория:  
-     [race_to_commit.bat](https://github.com/salavey13/tupabase13/blob/main/race_to_commit.bat)  
+     [race_to_commit_ru.bat](https://github.com/salavey13/tupabase13/blob/main/race_to_commit_ru.bat)  
 
 2. **Запустите его**  
    - Дважды щелкните по файлу `race_to_commit.bat`.  
