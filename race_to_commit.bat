@@ -1,5 +1,6 @@
 @echo off
 :: SUPER LAZY RACE SCRIPT WITH PULL REQUEST & FIRST COMMIT MSG SUPPORT
+:: IMPROVED VERSION WITH BETTER ARCHIVE HANDLING AND GIT CHECKS
 
 :: Config Variables
 set REPO_URL=https://github.com/salavey13/tupabase13
@@ -46,10 +47,14 @@ if not exist "lib" (
 
 :: Detect Existing VERSION File
 if exist "VERSION" (
-    for /f "tokens=1" %%v in ('type VERSION') do set CURRENT_VERSION=%%v
-    echo Current project version: %CURRENT_VERSION%
+    for /f "tokens=1-3" %%v in ('type VERSION') do (
+        set CURRENT_VERSION=%%v
+        set LAST_APPLIED_ZIP=%%w
+    )
+    echo Current project version: %CURRENT_VERSION%, last applied ZIP: %LAST_APPLIED_ZIP%
 ) else (
     set CURRENT_VERSION=0
+    set LAST_APPLIED_ZIP=
     echo 0 > VERSION
 )
 
@@ -92,9 +97,23 @@ if %ZIP_COUNT% equ 1 (
 :: Check VERSION File to Skip Already Applied ZIPs
 findstr /c:"%LATEST_ZIP%" VERSION >nul 2>&1
 if %ERRORLEVEL% equ 0 (
-    echo 🔄 Archive "%LATEST_ZIP%" is already applied. Please add a new ZIP.
-    pause
-    exit /b
+    echo 🔄 Archive "%LATEST_ZIP%" is already applied. Checking for modifications...
+    powershell -Command "Expand-Archive -Force '%REPO_DIR%\%LATEST_ZIP%' -DestinationPath .\temp_unzip"
+    for /d %%d in (temp_unzip\*) do set ROOT_UNPACKED_DIR=%%d
+    xcopy /s /y "!ROOT_UNPACKED_DIR!\*" "%REPO_DIR%\temp_git_check"
+    rmdir /s /q temp_unzip
+
+    :: Compare Files with Git
+    git diff --quiet "%REPO_DIR%\temp_git_check" >nul 2>&1
+    if %ERRORLEVEL% equ 0 (
+        echo 🔄 No changes detected in "%LATEST_ZIP%". Nothing to apply.
+        rmdir /s /q "%REPO_DIR%\temp_git_check"
+        pause
+        exit /b
+    ) else (
+        echo ⚠️ Archive "%LATEST_ZIP%" is modified. Proceeding to apply changes.
+    )
+    rmdir /s /q "%REPO_DIR%\temp_git_check"
 )
 
 :: Extract ZIP
@@ -106,7 +125,8 @@ rmdir /s /q temp_unzip
 
 :: Update VERSION File
 set /a NEXT_VERSION=%CURRENT_VERSION%+1
-echo %NEXT_VERSION% %LATEST_ZIP% %DEFAULT_AI_URL% >> VERSION
+set AI_TOOL_URL=https://bolt.new/~/%LATEST_ZIP:~0,-4%
+echo %NEXT_VERSION% %LATEST_ZIP% %AI_TOOL_URL% >> VERSION
 
 :: Use Default AI URL for First Commit
 if %RACE_WINNER% equ 1 (
@@ -116,7 +136,7 @@ if %RACE_WINNER% equ 1 (
     echo Please write a legendary first commit message:
     set /p COMMIT_MSG="Your first commit message: "
 ) else (
-    set COMMIT_MSG="💥 Applied updates from %LATEST_ZIP% | Version %NEXT_VERSION% | AI Tool: %DEFAULT_AI_URL%"
+    set COMMIT_MSG="💥 Applied updates from %LATEST_ZIP% | Version %NEXT_VERSION% | AI Tool: %AI_TOOL_URL%"
     echo ✅ You’ve successfully contributed. Great job!
 )
 
