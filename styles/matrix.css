@@ -1,0 +1,286 @@
+@keyframes scan {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes redPillGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 1rem rgba(239, 68, 68, 0.7));
+  }
+  50% {
+    filter: drop-shadow(0 0 3rem rgba(239, 68, 68, 1));
+  }
+}
+
+@keyframes redPillPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-scan {
+  animation: scan 8s linear infinite;
+}
+
+.animate-red-pill {
+  animation: redPillGlow 3s ease-in-out infinite,
+             redPillPulse 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 1s ease-out;
+}
+
+.crt::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.crt::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.27861;
+  }
+  5% {
+    opacity: 0.34769;
+  }
+  10% {
+    opacity: 0.23604;
+  }
+  15% {
+    opacity: 0.90626;
+  }
+  20% {
+    opacity: 0.18128;
+  }
+  25% {
+    opacity: 0.83891;
+  }
+  30% {
+    opacity: 0.65583;
+  }
+  35% {
+    opacity: 0.67807;
+  }
+  40% {
+    opacity: 0.26559;
+  }
+  45% {
+    opacity: 0.84693;
+  }
+  50% {
+    opacity: 0.96019;
+  }
+  55% {
+    opacity: 0.08594;
+  }
+  60% {
+    opacity: 0.20313;
+  }
+  65% {
+    opacity: 0.71988;
+  }
+  70% {
+    opacity: 0.53455;
+  }
+  75% {
+    opacity: 0.37288;
+  }
+  80% {
+    opacity: 0.71428;
+  }
+  85% {
+    opacity: 0.70419;
+  }
+  90% {
+    opacity: 0.7003;
+  }
+  95% {
+    opacity: 0.36108;
+  }
+  100% {
+    opacity: 0.24387;
+  }
+}
+
+.matrix-text-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.matrix-text-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(176, 38, 255, 0.15),
+    rgba(176, 38, 255, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(176, 38, 255, 0.5);
+}
+
+.red-glow {
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip: rect(44px, 9999px, 56px, 0);
+  }
+  5% {
+    clip: rect(59px, 9999px, 17px, 0);
+  }
+  10% {
+    clip: rect(91px, 9999px, 98px, 0);
+  }
+  15% {
+    clip: rect(91px, 9999px, 8px, 0);
+  }
+  20% {
+    clip: rect(37px, 9999px, 53px, 0);
+  }
+  25% {
+    clip: rect(92px, 9999px, 67px, 0);
+  }
+  30% {
+    clip: rect(8px, 9999px, 4px, 0);
+  }
+  35% {
+    clip: rect(51px, 9999px, 14px, 0);
+  }
+  40% {
+    clip: rect(26px, 9999px, 31px, 0);
+  }
+  45% {
+    clip: rect(73px, 9999px, 4px, 0);
+  }
+  50% {
+    clip: rect(21px, 9999px, 94px, 0);
+  }
+  55% {
+    clip: rect(39px, 9999px, 44px, 0);
+  }
+  60% {
+    clip: rect(54px, 9999px, 93px, 0);
+  }
+  65% {
+    clip: rect(38px, 9999px, 61px, 0);
+  }
+  70% {
+    clip: rect(66px, 9999px, 6px, 0);
+  }
+  75% {
+    clip: rect(84px, 9999px, 85px, 0);
+  }
+  80% {
+    clip: rect(88px, 9999px, 4px, 0);
+  }
+  85% {
+    clip: rect(10px, 9999px, 24px, 0);
+  }
+  90% {
+    clip: rect(69px, 9999px, 54px, 0);
+  }
+  95% {
+    clip: rect(70px, 9999px, 57px, 0);
+  }
+  100% {
+    clip: rect(19px, 9999px, 44px, 0);
+  }
+}
+
+.glitch {
+  position: relative;
+  animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 #ff0000;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 #B026FF;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+
