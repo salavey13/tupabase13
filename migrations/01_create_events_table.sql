@@ -75,7 +75,10 @@ CREATE TABLE events (
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     organizer_id text REFERENCES organizers(id)
+<<<<<<< HEAD
     digiseller_product_id TEXT;
+=======
+>>>>>>> f5fd64fe817f171a84320a08851bbd49cdaa3cc0
 );
 
 -- Create ticket tiers table
@@ -86,7 +89,10 @@ CREATE TABLE ticket_tiers (
     price numeric NOT NULL,
     availability integer NOT NULL DEFAULT 0,
     perks text DEFAULT 'General Admission'
+<<<<<<< HEAD
     digiseller_product_id TEXT;
+=======
+>>>>>>> f5fd64fe817f171a84320a08851bbd49cdaa3cc0
 );
 
 -- Create tickets table
@@ -315,6 +321,7 @@ BEGIN
 END; 
 $$;
 
+
 /*-- Function to generate tickets for an event using ticket_tiers table (hz)
 CREATE OR REPLACE FUNCTION generate_tickets_for_event(event_slug TEXT)
 RETURNS TABLE (ticket_id UUID, tier_name TEXT, unique_code TEXT)
@@ -336,6 +343,7 @@ BEGIN
 END;
 $$;
 */
+
 /*CREATE TRIGGER new_event_trigger
     AFTER INSERT ON events
     FOR EACH ROW
@@ -466,7 +474,7 @@ INSERT INTO events (
     ARRAY['techno', 'electronic', 'party']
 );
 
--- Add more sample data as needed
+
 -- Function to generate tickets for an event
 
 
@@ -487,3 +495,6 @@ BEGIN
   GROUP BY t.tier_name;
 END;
 $$;
+
+-- Add more sample data as needed
+
