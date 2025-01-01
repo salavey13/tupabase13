@@ -1,0 +1,2649 @@
+
+Item, order num, unique code, email ...
+Messages
+Complaints
+Offers
+Chats
+Logout
+РУС
+ENG
+Products
+Shop
+My Sales
+My Account
+Affiliate program
+Description of service
+Categories
+Settings
+Widget
+Payment
+Export
+Free website
+Social networks
+API
+DocumentationAPI keys
+API
+Back
+Creating and editing products
+< Back to the table of contents
+
+Creation of product of type "Unique product with fixed price"
+Creation of goods of "Unique item with variable price" type
+Creation of goods of "Electronic books" type
+Creation of goods of "Software" type
+Creation of goods of "Arbitrary digital product" type
+
+Editing of product of type "Unique product with fixed price"
+Editing of goods of "Unique item with variable price" type
+Editing of goods of "Electronic books" type
+Editing of goods of "Software" type
+Editing of goods of "Arbitrary digital product" type
+Editing of base props of product. Switch on/off sales.
+
+Add product images
+Adding a youtube links to the gallery
+Changing the image position in gallery
+
+Bulk update products status
+Bulk update of product prices
+Getting the execution status of an asynchronous task
+
+Adding goods to the marketplace subcategory
+Getting the category tree of the marketplace
+Getting the subcategories of the marketplace
+
+Creation of product of type "Unique product with fixed price"
+URL and request format
+https://api.digiseller.com/api/product/create/uniquefixed?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "content_type": "text",
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "price": {
+        "price": 725,
+        "currency": "RUB"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "verify_code": {
+        "auto_verify": true,
+        "verify_url": "http://example.com/verify"
+    },
+    "preorder": {
+        "enabled": true,
+        "delivery_date": "2018-10-10"
+    }
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Create	Method for creating access token
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+content_type	Item content type	String. required field. available values: 'text', 'digisellercode', 'file'
+name	Item name	Array. required field
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer. optional field. minimum of 1% or 0 for products that are excluded. By defaul, value is 0.
+categories	Item categories	Item name
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array. required field
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	For a favorable review of the purchase
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Float
+guarantee	Refund of payment	Optional field. Default: false
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+-hours, for products of type unique code (automatically created by Digiseller system);
+-days, for other products.	Integer
+add_info	Additional information	Array optional field
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+trial_url	URL of trial version	String. optional field
+preorder	Pre-order	Optional field. By default, model 'preorder' is disabled
+preorder\enabled	Pre-order is enabled	Boolean
+preorder\delivery_date	Date of delivery of the item to the buyer	Data format: 'yyyy-MM-dd' or 'yyyy-MM-ddTHH:mm'
+verify_code	Code verification	Optional field. by default, code verification is done manually
+verify_code\auto_verify	Automatic code verification	Boolean
+verify_code\verify_url	Url for automatic code verification	String
+instruction	Usage instruction give to the buyer on the order description page	Optional field
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. optional field. by default: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "product_id": 2338757
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\product_id	Created item id	Integer
+
+
+
+Creation of goods of "Unique item with variable price" type
+URL and request format
+https://api.digiseller.com/api/product/create/uniqueunfixed?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "content_type": "digisellercode",
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "prices": {
+        "price": 250,
+        "unit_quantity": 1000000,
+        "currency": "RUB,
+        "unit_name": "Gold"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "verify_code": {
+        "auto_verify": true,
+        "verify_url": "http://example.com/verify",
+        "parameters": ["test"],
+        "redirect_to": "https://example.com/failurl"
+    },
+    "discounts": [
+        {
+            "unit_for_discount": 1.0,
+            "discount": 1
+        },
+        {
+            "unit_for_discount": 1.0,
+            "discount": 1
+        }
+    ],
+    "limitations": {
+        "type": "sample string 1",
+        "only_integer": true,
+        "limitations": [
+          1,
+          2
+        ]
+    },
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Create	Method for creating access token
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+price\unit_quantity	Unit quantity	Integer. available values: 1, 10, 100, 1000, 10 000, 100 000, 1 000 000, 10 000 000, 100 000 000, 1 000 000 000
+price\unit_name	Unit name	String
+content_type	Item content type	String. required field. available values: 'digisellercode'
+name	Item name	Array. required field
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer. optional field. minimum of 1% or 0 for products that are excluded. By defaul, value is 0.
+categories	Item categories	Item name
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array. required field
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	For a favorable review of the purchase
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Integer
+guarantee	Refund of payment	Optional field. Default: false
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+- hours, for unique codes;
+- days, for other products.	Integer
+add_info	Additional information	Array optional field
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+verify_code	Code verification	Optional field. by default, code verification is done manually
+verify_code\auto_verify	Automatic code verification	Boolean
+verify_code\verify_url	Url for automatic code verification	String
+limitations	Purchase limitations	
+verify_code\redirect_to	Redirect page address if there are no additional parameters when paying	String. optional parameter
+verify_code\parameters	Additional options for payment	Array of strings. optional parameter
+limitations\type	Limitation type	String. available values:
+'None' - is missing
+'MinAndMax' - minimum and maximum quantity for buying
+'FixedQuantity' - fixed quantity for buying
+limitations\limitations	Limitation digits	Array of integers
+MinAndMax - two digits, any order
+FixedQuantity - list of fixed quantity
+limitations\only_integer	For purchase are only an integer (not float)	Boolean
+discounts	Discounts when purchasing a certain quantity of goods	Array optional field
+discounts\unit_for_discount	Count of item for discount	Float
+discounts\discount	Discount percentage	Integer
+instruction	Usage instruction give to the buyer on the order description page	Optional field
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. optional field. by default: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "product_id": 2338757
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\product_id	Created item id	Integer
+
+
+
+Creation of goods of "Electronic books" type
+URL and request format
+https://api.digiseller.com/api/product/create/book?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "content_type": "text",
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "price": {
+        "price": 725,
+        "currency": "RUB"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "trial_url": "http://localhost",
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Create	Method for creating access token
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+content_type	Item content type	String. required field. available values: 'text', 'url', 'file'
+name	Item name	Array. required field
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer. optional field. minimum of 1% or 0 for products that are excluded. By defaul, value is 0.
+categories	Item categories	Item name
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array. required field
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	For a favorable review of the purchase
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Float
+guarantee	Refund of payment	Optional field. Default: false
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+- hours, for unique codes;
+- days, for other products.	Integer
+add_info	Additional information	Array optional field
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+trial_url	URL of trial version	String. optional field
+instruction	Usage instruction give to the buyer on the order description page	Optional field
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. optional field. by default: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "product_id": 2338757
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\product_id	Created item id	Integer
+
+
+
+Creation of goods of "Software" type
+URL and request format
+https://api.digiseller.com/api/product/create/software?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "content_type": "text",
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "price": {
+        "price": 725,
+        "currency": "RUB"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "trial_url": "http://localhost",
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Create	Method for creating access token
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+content_type	Item content type	String. required field. available values: 'text', 'url', 'file'
+name	Item name	Array. required field
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer. optional field. minimum of 1% or 0 for products that are excluded. By defaul, value is 0.
+categories	Item categories	Item name
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array. required field
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	For a favorable review of the purchase
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Float
+guarantee	Refund of payment	Optional field. Default: false
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+- hours, for unique codes;
+- days, for other products.	Integer
+add_info	Additional information	Array optional field
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+trial_url	URL of trial version	String. optional field
+instruction	Usage instruction give to the buyer on the order description page	Optional field
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. optional field. by default: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "product_id": 2338757
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\product_id	Created item id	Integer
+
+
+
+Creation of goods of "Arbitrary digital product" type
+URL and request format
+https://api.digiseller.com/api/product/create/arbitrary?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "content_type": "text",
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "price": {
+        "price": 725,
+        "currency": "RUB"
+    },
+    "affiliate_program": 0,
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "pay_as_you_want": true,
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Create	Method for creating access token
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+content_type	Item content type	String. required field. available values: 'text', 'file', 'form'
+name	Item name	Array. required field
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+affiliate_program	Affiliate program	0 - Deduction for selected affiliates only
+1 - Deduction to agents
+2 - The item is not part of an affiliate program
+comission_partner	Commission fee for partners	Integer. optional field. minimum of 1% or 0 for products that are excluded. By defaul, value is 0.
+categories	Item categories	Array
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array. required field
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Integer
+guarantee	Refund of payment	Optional field. Default: false
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+- hours, for unique codes;
+- days, for other products.	Integer
+add_info	Additional information	Array optional field
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+pay_as_you_want	PWYW model	Boolean. required field
+instruction	Usage instruction give to the buyer on the order description page	Optional field
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. optional field. by default: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "product_id": 2338757
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\product_id	Created item id	Integer
+
+Editing of product of type "Unique product with fixed price"
+URL and request format
+https://api.digiseller.com/api/product/edit/uniquefixed/{product_id}?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "enabled": true,
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "price": {
+        "price": 725,
+        "currency": "RUB"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "verify_code": {
+        "auto_verify": true,
+        "verify_url": "http://example.com/verify"
+    },
+    "preorder": {
+        "enabled": true,
+        "delivery_date": "2018-10-10"
+    }
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+enabled	Product posted for sale	Boolean
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+name	Item name	Array
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer, minimum of 1%;
+0 - deduction for selected affiliates only;
+-1 - the item is not part of an affiliate program.
+categories	Item categories	Array
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Float
+guarantee	Refund of payment	
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+-hours, for products of type unique code (automatically created by Digiseller system);
+-days, for other products.	Integer
+add_info	Additional information	Array
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+trial_url	URL of trial version	String. optional field
+preorder	Pre-order	
+preorder\enabled	Pre-order is enabled	Boolean
+preorder\delivery_date	Date of delivery of the item to the buyer	Data format: 'yyyy-MM-dd' or 'yyyy-MM-ddTHH:mm'
+verify_code	Code verification	Optional field. by default, code verification is done manually
+verify_code\auto_verify	Automatic code verification	Boolean
+verify_code\verify_url	Url for automatic code verification	String
+instruction	Usage instruction give to the buyer on the order description page	
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. for removing: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "status": "Success"
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\status	Response status	String
+
+
+
+Editing of goods of "Unique item with variable price" type
+URL and request format
+https://api.digiseller.com/api/product/edit/uniqueunfixed/{product_id}?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "enabled": true,
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "prices": {
+        "price": 250,
+        "unit_quantity": 1000000,
+        "currency": "RUB,
+        "unit_name": "Gold"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "verify_code": {
+        "auto_verify": true,
+        "verify_url": "http://example.com/verify"
+    },
+    "discounts": [
+        {
+            "unit_for_discount": 1.0,
+            "discount": 1
+        },
+        {
+            "unit_for_discount": 1.0,
+            "discount": 1
+        }
+    ],
+    "limitations": {
+        "type": "sample string 1",
+        "only_integer": true,
+        "limitations": [
+          1,
+          2
+        ]
+    },
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+enabled	Product posted for sale	Boolean
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+price\unit_quantity	Unit quantity	Integer. available values: 1, 10, 100, 1000, 10 000, 100 000, 1 000 000, 10 000 000, 100 000 000, 1 000 000 000
+price\unit_name	Unit name	String
+name	Item name	Array
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer, minimum of 1%;
+0 - deduction for selected affiliates only;
+-1 - the item is not part of an affiliate program.
+categories	Item categories	Array
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Integer
+guarantee	Refund of payment	
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+- hours, for unique codes;
+- days, for other products.	Integer
+add_info	Additional information	Array
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+verify_code	Code verification	Optional field. by default, code verification is done manually
+verify_code\auto_verify	Automatic code verification	Boolean
+verify_code\verify_url	Url for automatic code verification	String
+verify_code\redirect_to	Redirect page address if there are no additional parameters when paying	String. optional parameter
+verify_code\parameters	Additional options for payment	Array of strings. optional parameter
+limitations	Purchase limitations	
+limitations\type	Limitation type	String. available values:
+'None' - is missing
+'MinAndMax' - minimum and maximum quantity for buying
+'FixedQuantity' - fixed quantity for buying
+limitations\limitations	Limitation digits	Array of integers
+MinAndMax - two digits, any order
+FixedQuantity - list of fixed quantity
+limitations\only_integer	For purchase are only an integer (not float)	Boolean
+discounts	Discounts when purchasing a certain quantity of goods	Array
+discounts\unit_for_discount	Count of item for discount	Float
+discounts\discount	Discount percentage	Integer
+instruction	Usage instruction give to the buyer on the order description page	
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. for removing: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "status": "Success"
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\status	Response status	String
+
+
+
+Editing of goods of "Electronic books" type
+URL and request format
+https://api.digiseller.com/api/product/edit/book/{product_id}?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "enabled": true,
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "price": {
+        "price": 725,
+        "currency": "RUB"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "trial_url": "http://localhost",
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+enabled	Product posted for sale	Boolean
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+name	Item name	Array
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer, minimum of 1%;
+0 - deduction for selected affiliates only;
+-1 - the item is not part of an affiliate program.
+categories	Item categories	Array
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Float
+guarantee	Refund of payment	
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+- hours, for unique codes;
+- days, for other products.	Integer
+add_info	Additional information	Array
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+trial_url	URL of trial version	String
+instruction	Usage instruction give to the buyer on the order description page	
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. for removing: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "status": "Success"
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\status	Response status	String
+
+
+
+Editing of goods of "Software" type
+URL and request format
+https://api.digiseller.com/api/product/edit/software/{product_id}?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "enabled": true,
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "price": {
+        "price": 725,
+        "currency": "RUB"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "trial_url": "http://localhost",
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+enabled	Product posted for sale	Boolean
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+name	Item name	Array
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer, minimum of 1%;
+0 - deduction for selected affiliates only;
+-1 - the item is not part of an affiliate program.
+categories	Item categories	Array
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Float
+guarantee	Refund of payment	
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+- hours, for unique codes;
+- days, for other products.	Integer
+add_info	Additional information	Array
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+trial_url	URL of trial version	String
+instruction	Usage instruction give to the buyer on the order description page	
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. for removing: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "status": "Success"
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\status	Response status	String
+
+
+
+Editing of goods of "Arbitrary digital product" type
+URL and request format
+https://api.digiseller.com/api/product/edit/arbitrary/{product_id}?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "enabled": true,
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "price": {
+        "price": 725,
+        "currency": "RUB"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+enabled	Product posted for sale	Boolean
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+name	Item name	Array
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer, minimum of 1%;
+0 - deduction for selected affiliates only;
+-1 - the item is not part of an affiliate program.
+categories	Item categories	Array
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Integer
+guarantee	Refund of payment	
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+- hours, for unique codes;
+- days, for other products.	Integer
+add_info	Additional information	Array
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+instruction	Usage instruction give to the buyer on the order description page	
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. for removing: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "status": "Success"
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\status	Response status	String
+
+
+
+Editing of base props of product. Switch on/off sales.
+URL and request format
+https://api.digiseller.com/api/product/edit/base/{product_id}?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+{
+    "enabled": true,
+    "name": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовый продукт №1"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test product №1"
+        }
+    ],
+    "price": {
+        "price": 725,
+        "currency": "RUB"
+    },
+    "comission_partner": 15,
+    "categories": [
+        {
+            "owner": 0,
+            "category_id": 7074
+        },
+        {
+            "owner": 1,
+            "category_id": 18162
+        }
+    ],
+    "bonus": {
+        "enabled": false,
+        "percent": 5
+    },
+    "guarantee": {
+        "enabled": true,
+        "value": 5
+    },
+    "description": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовое описание"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test description"
+        }
+    ],
+    "add_info": [
+        {
+            "locale": "ru-RU",
+            "value": "Тестовая дополнительная информация"
+        },
+        {
+            "locale": "en-US",
+            "value": "Test additional information"
+        }
+    ],
+    "address_required": false,
+    "instruction": {
+        "type": "text",
+        "locales": [
+            {
+                "locale": "ru-RU",
+                "value": "Русская инструкция"
+            },
+            {
+                "locale": "en-US",
+                "value": "English instruction"
+            }
+        ]
+    },
+    "present_product_id": 123321,
+    "online_checkout_name": "Тестовый продукт №1",
+    "online_checkout_category": "Goods",
+    "online_checkout_tax": "no_vat"
+}
+                
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+enabled	Product posted for sale	Boolean
+price	Price	Required field
+price\price	The product cost for one unit	A fractional number. separator - dot
+price\currency	Product price currency	String. available values: RUB, USD, EUR, UAH
+name	Item name	Array
+name\locale	Localization	String. available values: 'ru-RU', 'en-US'
+name\value	Localization value	String
+comission_partner	Commission fee for partners	Integer, minimum of 1%;
+0 - deduction for selected affiliates only;
+-1 - the item is not part of an affiliate program.
+categories	Item categories	Array
+categories\owner	Category owner	Integer. 0 - own store, 1 - Plati.Market, 2 - WMCENTRE, 3 - GGSell
+categories\category_id	Identifier of the category of own store or marketplace	Integer
+description	Item description	Array
+description\locale	Localization	String. available values: 'ru-RU', 'en-US'
+description\value	Localization value	String
+bonus	For a favorable review of the purchase	
+bonus\enabled	Bonus enabled	Boolean
+bonus\percent	Percentage of the product price that will be issued to the buyer as a gift certificate	Integer
+guarantee	Refund of payment	
+guarantee\enabled	Guarantee enabled	Boolean
+guarantee\value	Guarantee in:
+- hours, for unique codes;
+- days, for other products.	Integer
+add_info	Additional information	Array
+add_info\locale	Localization	String. available values: 'ru-RU', 'en-US'
+address_required	Buyer must enter delivery address before paying	Boolean
+instruction	Usage instruction give to the buyer on the order description page	
+instruction\type	Instruction type	String. available values: 'url', 'text'
+instruction\locales	Usage instruction with localizations	Array
+instruction\locales\locale	Localization	String. available values: 'ru-RU', 'en-US'
+instruction\locales\value	Localization value	String
+present_product_id	Item id provided as a gift to the buyer	Integer. for removing: 0
+sales_limit	Visibility of sales number	Available values: empty field - show, -1 - hide, 1, 10, 50, 100, 1000
+online_checkout_name	Product name for online checkout	String. optional field
+online_checkout_category	Settlement item flag (online cash register)
+Available values:
+Goods - goods
+ExciseGoods - excisable goods
+Work - work
+Service - service
+GamblingBet - gambling bet
+GamblingPrize - gambling winnings
+LotteryTicket - lottery ticket
+LotteryPrize - lottery winnings
+IntellectualPropertyGrant - provision of intellectual property grant
+Payment - payment
+AgencyFee - agency fee
+CompositeSubject - composite settlement item
+OtherSubject - other settlement item
+PropertyRight - property right
+NonOperatingIncome - non-operating income
+InsurancePremiums - insurance premiums
+TradeFee - trade fee
+ResortFee - resort fee
+Pledge - pledge	String. optional field
+online_checkout_tax	VAT rate for generating an electronic receipt
+Available values:
+vat20 - calculated rate 20%
+vat10 - calculated rate 10%
+vat110 - calculated rate 10/110
+vat120 - calculated rate 20/120
+vat0 - calculated rate 0%
+no_vat - VAT is not imposed	String. optional field
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "status": "Success"
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	
+content\status	Response status	String
+
+
+
+Add product images
+URL and request format
+https://api.digiseller.com/api/product/preview/add/images/{product_id}?token={token}
+Method:
+POST
+Request headers:
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+Content-Type: multipart/form-data;
+Request format:
+The request body must contain a product image file in multipart/form-data format.
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Gallery ]: Adding	Method for creating access token
+product_id	Item id	Integer
+JSON response format:
+xml json
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": [{
+	"preview_id" : 123456,
+        "filename": "new_file_name.png"
+    }]
+}
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	Array
+content\preview_id	New content id	Integer
+content\filename	File name	New file name with which it will be displayed on the product page
+
+
+
+Adding a youtube links to the gallery
+URL and request format
+https://api.digiseller.com/api/product/preview/add/videos/{product_id}?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+
+{
+    "urls" : ["url_to_video","url_to_video"]
+}
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Gallery ]: Adding	Method for creating access token
+product_id	Item id	Integer
+url	Video URL	Array of strings
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": [
+        {
+            "preview_id" : 123456,
+            "url": "link_to_image_file"
+        },
+        {
+            "preview_id" : 123456,
+            "url": "link_to_image_file"
+        }
+    ]
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	Array
+content\preview_id	New content id	Integer
+content\url	Link to image file	String
+
+
+
+Changing the image position in gallery
+URL and request format
+https://api.digiseller.com/api/product/preview/options/{type}/{preview_id}?token={token}
+Method:
+POST
+Request headers:
+
+Content-Type: "text/xml" | "text/json" | "application/json" Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+                
+JSON request format
+xml json
+
+{
+    "enabled" : true,
+    "index" : 0,
+    "delete" : false
+}
+Request parameters:
+Name	Use	Comment
+type	Preview type	Строка.
+Possible values: image or video
+preview_id	Preview ID	Integer
+token	Access token	Method for creating access token
+enabled	Enable/disable display of preview on the product page	true | false, optional
+index	Sets the order of the preview when displaying	Integer, optional
+delete	Removes preview from gallery	true | false, optional
+Response format:
+
+
+
+Bulk update products status
+URL and request format
+https://api.digiseller.com/api/product/edit/V2/status?token={token}
+Method:
+POST
+Request headers:
+Content-Type: "text/xml" | "text/json" | "application/json" - Request format
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+JSON request format
+xml json
+{
+  "new_status": "disabled",
+  "products": [
+    123,
+    2345
+  ]
+}
+Request parameters:
+Name	Use	Comment
+new_status	New product status	String. available values: "disabled", "enabled"
+products	Item id	Array. No more than 200 products in 1 request
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+JSON response format:
+xml json
+{
+    "retval": 0,
+    "retdesc": null,
+    "errors": null,
+    "content":  "03a5e74f-654d-4d60-9585-ff1dcf02fe6f"
+}
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	ID to track task completion	If request is invalid, this field will be null
+Getting the execution status of an asynchronous task
+
+
+
+Adding goods to the marketplace subcategory
+This method is relevant only for the marketplace Plati.Market
+
+URL and request format
+https://api.digiseller.com/api/product/platform/category/add/{product_id}/{category_id}?token={token}
+Method:
+GET
+Request headers:
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+Request parameters:
+Name	Use	Comment
+product_id	Item id	Integer
+category_id	Marketplace subcategory id	Integer
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+JSON response format:
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": {
+        "status": "success"
+    }
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	If request is invalid, this field will be null
+content\status	Status	String
+
+Getting the category tree of the marketplace
+URL and request format
+https://api.digiseller.com/api/dictionary/platforms/categories/{id}
+Method:
+GET
+Request headers:
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+Request parameters:
+Name	Use	Comment
+id	Marketplace code	Available values: 'plati', 'ggsel', 'wmcentre'
+JSON response format:
+xml json
+
+{
+    "retval": 0,
+    "retdesc": "",
+    "errors": null,
+    "content": [
+        {
+            "id": 4101,
+            "level": 0,
+            "parent_id": 0,
+            "name": [
+                {
+                    "locale": "ru-RU",
+                    "value": "Цифровые товары"
+                },
+                {
+                    "locale": "en-US",
+                    "value": null
+                }
+            ],
+            "can_add": false,
+            "children": [
+                {
+                    "id": 4115,
+                    "level": 1,
+                    "parent_id": 4101,
+                    "name": [
+                        {
+                            "locale": "ru-RU",
+                            "value": "Телефоны, смартфоны"
+                        },
+                        {
+                            "locale": "en-US",
+                            "value": null
+                        }
+                    ],
+                    "can_add": true
+                }
+            ]
+        },
+        {
+            "id": 4101,
+            "level": 0,
+            "parent_id": 0,
+            "name": [
+                {
+                    "locale": "ru-RU",
+                    "value": "Цифровые товары"
+                },
+                {
+                    "locale": "en-US",
+                    "value": "Digital goods"
+                }
+            ],
+            "children": [
+                {
+                    "id": 4115,
+                    "level": 1,
+                    "parent_id": 4101,
+                    "name": [
+                        {
+                            "locale": "ru-RU",
+                            "value": "Телефоны, смартфоны"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+                
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	If request is invalid, this field will be null
+content\id	Marketplace category id	Integer
+content\level	Nesting level of the category	Integer
+content\parent_id	Parent category id	Integer
+content\name	Category names	Array
+content\name\locale	Localization ('ru-RU' or 'en-US')	String
+content\name\value	Category name	String
+content\can_add	Category available for adding products	Boolean
+content\children	Child categories	Array
+
+Getting the subcategories of the marketplace
+This method is relevant only for the marketplace Plati.Market
+
+URL and request format
+https://api.digiseller.com/api/dictionary/platforms/subcategories/{id}
+Method:
+GET
+Request headers:
+Accept: "text/xml" | "text/json" | "application/json" - Response format
+Request parameters:
+Name	Use	Comment
+id	Marketplace category id	Integer
+JSON response format:
+xml json
+
+    {
+        "retval": 0,
+        "retdesc": "",
+        "errors": null,
+        "content": [
+            {
+                "id": 1,
+                "title": "World of Warcraft",
+                "name": [
+                    {
+                        "locale": "ru-RU",
+                        "value": "TIMECARD 60 дней (RUS)"
+                    },
+                    {
+                        "locale": "en-US",
+                        "value": "TIMECARD 60 days (RUS)"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "title": "World of Warcraft",
+                "name": [
+                    {
+                        "locale": "ru-RU",
+                        "value": "CD-Key WRATH OF THE LICH KING (RUS)"
+                    },
+                    {
+                        "locale": "en-US",
+                        "value": null
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "title": "World of Warcraft",
+                "name": [
+                    {
+                        "locale": "ru-RU",
+                        "value": "CD-Key BURNING CRUSADE (RUS)"
+                    },
+                    {
+                        "locale": "en-US",
+                        "value": null
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "title": "World of Warcraft",
+                "name": [
+                    {
+                        "locale": "ru-RU",
+                        "value": "CD-Key Battle Chest 14 дней (RUS)"
+                    },
+                    {
+                        "locale": "en-US",
+                        "value": "CD-Key Battle Chest 14 days (RUS)"
+                    }
+                ]
+            },
+            {
+                "id": 5,
+                "title": "World of Warcraft",
+                "name": [
+                    {
+                        "locale": "ru-RU",
+                        "value": "CD-Key Battle Chest 30 дней (RUS)"
+                    },
+                    {
+                        "locale": "en-US",
+                        "value": "CD-Key Battle Chest 30 days (RUS)"
+                    }
+                ]
+            },
+            {
+                "id": 876,
+                "title": "World of Warcraft",
+                "name": [
+                    {
+                        "locale": "ru-RU",
+                        "value": "CD-Key Гостевой ключ (RUS)"
+                    },
+                    {
+                        "locale": "en-US",
+                        "value": "CD-Key Guest Key (RUS)"
+                    }
+                ]
+            }
+        ]
+    }
+Response parameters:
+Name	Use	Comment
+retval	Result code	0 - success, 1 - error. Detailed information in field 'errors'
+retdesc	Description of result code	Detailed information in field 'errors'
+errors	Result code	Null - errors count is 0. if request is invalid, in this field this field will contain an array of errors
+errors\code	Error code	String
+errors\message	Description of result code	String
+content	Response body	If request is invalid, this field will be null
+content\id	Subcategory ID	Integer
+content\title	Title of category	String
+content\name	Subcategory names	Array
+content\name\locale	Localization ('ru-RU' or 'en-US')	String
+content\name\value	Subcategory name	String
+
+Bulk update of product prices
+URL and request format
+https://api.digiseller.com/api/product/edit/prices?token={token}
+Method:
+POST
+Request headers:
+Accept: "application/json" - Response format
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+JSON request format
+json
+[
+	{
+		"product_id": 1234567,
+		"price": 1.25,
+		"variants":[
+			{
+				"variant_id": 123456,
+				"rate": 2.43
+				"type": null
+			},
+			...
+		]
+	},
+	...
+]
+Request parameters:
+Name	Use	Comment
+product_id	Item id	Integer
+price	Price	Float
+variants		Optional parameter
+variants\variant_id	Variant id	Integer
+variants\rate	Modifier value	Float
+variants\type	Parameter type	Optional parameter
+String. available values: 'percentplus', 'percentminus', 'priceplus', 'priceminus'
+Response format
+9a968c22-9bc2-439f-bbaf-0f5a368f59a5
+Response parameters:
+Name	Use	Comment
+taskId	ID to track task completion	
+Getting the execution status of an asynchronous task
+
+Getting the execution status of an asynchronous task
+URL and request format
+https://api.digiseller.com/api/product/edit/UpdateProductsTaskStatus?taskId={taskId}&token={token}
+Method:
+GET
+Request headers:
+Accept: "application/json" - Response format
+Request parameters:
+Name	Use	Comment
+token	Access token,
+min. permission: [ Products ]: Edit	Method for creating access token
+TaskId	ID to track task completion	
+JSON response format
+json
+{
+	"TaskId": "c41ab768-2e96-4682-9d5b-c460c8c6c955",
+	"Status": 2, 
+	"SuccessCount": 1, 
+	"ErrorCount": 1, 
+	"TotalCount": 2, 
+	"ErrorsDescriptions": [ 
+		{
+			"Key": "2790216", 
+			"Value": "Продукт не найден или у Вас нет доступа для его редактирования"  
+		}
+	]
+}
+Response parameters:
+Name	Use	Comment
+TaskId	ID to track task completion	
+Status	Current task processing status	0 - InQueue, 1 - InProgress, 2 - Error, 3 - Done
+SuccessCount	Number of successfully processed products	
+ErrorCount	The number of products for which the operation failed	
+TotalCount	Total number of products in the request	
+ErrorsDescriptions	List of errors while executing the request	
+Key	Product ID	
+Value	Error description	
+Copyright ©2024 Fincom Teh Ltd.
+Designed by Computing Forces API Telegram Bot Chat
