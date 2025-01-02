@@ -23,12 +23,14 @@ export default function RootLayout({
       <body className={inter.className}>
         {/*<ThemeProvider attribute="class" className="pt-16"defaultTheme="dark" enableSystem>*/}
           <AppProvider>
-            <Suspense fallback={<div>Loading...</div>}>
+            
               <Navigation />
               <main >
+                <Suspense fallback={<div>Loading...</div>}>
                 {children}
+                </Suspense>
               </main>
-            </Suspense>
+            
           </AppProvider>
         {/*</ThemeProvider>*/}
       </body>

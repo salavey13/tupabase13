@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/utils/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,21 +15,21 @@ import { BoltNewIntegration } from '@/components/BoltNewIntegration';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BottomSheet } from '@/components/bottom-sheet';
 import { DbEvent } from '@/types/event';
-import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation'; // Ensure you're using the correct hook
+//import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation'; // Ensure you're using the correct hook
 
 export default function HomePage() {
   const [events, setEvents] = useState<DbEvent[]>([]);
   const [redPillRacingEvent, setRedPillRacingEvent] = useState<DbEvent|null>(null);
   // Initialize searchParams with a type that can handle both ReadonlyURLSearchParams and null
-  const [searchParams, setSearchParams] = useState<ReadonlyURLSearchParams | null>(null);
-  const params = useSearchParams();
+  //const [searchParams, setSearchParams] = useState<ReadonlyURLSearchParams | null>(null);
+ // const params = useSearchParams();
 
-  useEffect(() => {
-    // This ensures useSearchParams is used only on the client side
-    setSearchParams(params);
-  }, [params]);
+  // useEffect(() => {
+  //   // This ensures useSearchParams is used only on the client side
+  //   setSearchParams(params);
+  // }, [params]);
 
-  if (!searchParams) return <div>Loading...</div>;
+  //if (!searchParams) return <div>Loading...</div>;
 
   useEffect(() => {
     fetchEvents();
@@ -65,7 +65,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-green-500">
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="min-h-screen bg-black text-green-500">
       <div className="container mx-auto py-20  bg-black text-green-500 border-green-500">
         {redPillRacingEvent && (
           <Card className="mb-12  bg-black text-green-500 border-green-500">
@@ -172,5 +173,6 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 }

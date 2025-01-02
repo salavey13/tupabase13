@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Loader2, Plus, Send, Trash2 } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
+//import { useSearchParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -32,10 +32,10 @@ export default function TelegramAdmin() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   const [events, setEvents] = useState<Event[]>([])
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)  
-  const searchParams = useSearchParams()
+  //const searchParams = useSearchParams()
   const { toast } = useToast()
 
-  const token = searchParams?.get('token') || "6318069842:AAHgjV87LZfrsfm3fenz2xZzDmLttPKCWK4"
+  const token =  "6318069842:AAHgjV87LZfrsfm3fenz2xZzDmLttPKCWK4"//searchParams?.get('token') ||
 
   const addButton = () => {
     setButtons([...buttons, { text: '', url: '' }])

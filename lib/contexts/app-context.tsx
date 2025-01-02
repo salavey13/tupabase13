@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, ReactNode, Suspense } from 'react';
+import { createContext, useContext, useReducer, ReactNode, Suspense, useEffect } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { DbEvent, DbUser } from '@/types/event';
@@ -85,7 +85,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const isAuthenticated = Boolean(state.user);
 
   // Capture initial params on mount
-  React.useEffect(() => {
+  useEffect(() => {
     const params = {
       ticket: searchParams?.get('ticket') || undefined,
       event: searchParams?.get('event') || undefined,
@@ -94,8 +94,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_INITIAL_PARAMS', payload: params });
   }, []);
 
+
+
+  if (!searchParams) return <div>Loading...</div>;
+
   // Handle initial params after user is loaded
-  React.useEffect(() => {
+  useEffect(() => {
     async function handleInitialParams() {
       if (!state.user || !state.initialParams) return;
 
@@ -128,11 +132,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // (fetchUser, insertNewUser, handleReferral functions remain the same)
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    
       <AppContext.Provider value={{ state, dispatch, isAuthenticated }}>
+        <Suspense fallback={<div>Loading...</div>}>
         {children}
+        </Suspense>
       </AppContext.Provider>
-    </Suspense>
+    
   );
 }
 
