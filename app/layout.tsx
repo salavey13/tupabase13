@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-//import { Navigation } from '@/components/Navigation';
+import { Navigation } from '@/components/Navigation';
 import { AppProvider } from '@/lib/contexts/app-context';
 //import { ThemeProvider } from '@/components/theme-provider';
 
@@ -22,7 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         {/*<ThemeProvider attribute="class" className="pt-16"defaultTheme="dark" enableSystem>*/}
           <AppProvider>
-            {/*<Navigation />*/}
+            <Navigation />
             <main >
               {children}
             </main>

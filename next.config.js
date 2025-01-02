@@ -5,6 +5,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
+  experimental: {
+    serverActions: true
+  },
   webpack: (config) => {
     config.module.rules.push({
       test: /node_modules\/undici\/lib\/web\/fetch\/util\.js$/,

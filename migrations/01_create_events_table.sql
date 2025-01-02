@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS favorites CASCADE;
 DROP TABLE IF EXISTS history CASCADE;
 DROP TABLE IF EXISTS sales_tracking CASCADE;
 DROP TABLE IF EXISTS notion_sync CASCADE;
-
+DROP TABLE IF EXISTS notifications CASCADE;
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS http;
@@ -75,10 +75,6 @@ CREATE TABLE events (
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     organizer_id text REFERENCES organizers(id)
-<<<<<<< HEAD
-    digiseller_product_id TEXT;
-=======
->>>>>>> f5fd64fe817f171a84320a08851bbd49cdaa3cc0
 );
 
 -- Create ticket tiers table
@@ -89,10 +85,6 @@ CREATE TABLE ticket_tiers (
     price numeric NOT NULL,
     availability integer NOT NULL DEFAULT 0,
     perks text DEFAULT 'General Admission'
-<<<<<<< HEAD
-    digiseller_product_id TEXT;
-=======
->>>>>>> f5fd64fe817f171a84320a08851bbd49cdaa3cc0
 );
 
 -- Create tickets table
@@ -321,29 +313,6 @@ BEGIN
 END; 
 $$;
 
-
-/*-- Function to generate tickets for an event using ticket_tiers table (hz)
-CREATE OR REPLACE FUNCTION generate_tickets_for_event(event_slug TEXT)
-RETURNS TABLE (ticket_id UUID, tier_name TEXT, unique_code TEXT)
-LANGUAGE plpgsql
-AS $$
-DECLARE
-  tier RECORD;
-BEGIN
-  FOR tier IN SELECT * FROM ticket_tiers WHERE event_slug = $1
-  LOOP
-    FOR i IN 1..tier.availability
-    LOOP
-      INSERT INTO tickets (event_slug, tier_name, unique_code)
-      VALUES (event_slug, tier.tier, encode(gen_random_bytes(16), 'hex'))
-      RETURNING id, tier_name, unique_code;
-    END LOOP;
-  END LOOP;
-  RETURN QUERY SELECT id, tier_name, unique_code FROM tickets WHERE event_slug = $1;
-END;
-$$;
-*/
-
 /*CREATE TRIGGER new_event_trigger
     AFTER INSERT ON events
     FOR EACH ROW
@@ -474,27 +443,68 @@ INSERT INTO events (
     ARRAY['techno', 'electronic', 'party']
 );
 
+-- Add more sample data as needed
+/*
+  # Add Notifications System
 
--- Function to generate tickets for an event
+  1. New Tables
+    - `notifications`
+      - `id` (uuid, primary key)
+      - `user_id` (text, foreign key to users)
+      - `message` (text)
+      - `type` (text: info, success, warning, error)
+      - `created_at` (timestamp)
+      - `read` (boolean)
 
+  2. Security
+    - Enable RLS on notifications table
+    - Add policy for users to read their own notifications
+*/
 
--- Function to get ticket stats
-CREATE OR REPLACE FUNCTION get_ticket_stats(event_slug TEXT)
-RETURNS TABLE (tier_name TEXT, total INT, sold INT, available INT)
+-- Create notifications table
+CREATE TABLE notifications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id TEXT REFERENCES users(user_id),
+  message TEXT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('info', 'success', 'warning', 'error')),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  read BOOLEAN DEFAULT false,
+  metadata JSONB DEFAULT '{}'::jsonb
+);
+
+-- Enable RLS
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies
+CREATE POLICY "Users can read their own notifications"
+  ON notifications
+  FOR SELECT
+  TO authenticated
+  USING (auth.jwt() ->> 'chat_id' = user_id);
+
+CREATE POLICY "Users can update their own notifications"
+  ON notifications
+  FOR UPDATE
+  TO authenticated
+  USING (auth.jwt() ->> 'chat_id' = user_id);
+
+-- Create notification function
+CREATE OR REPLACE FUNCTION create_notification(
+  p_user_id TEXT,
+  p_message TEXT,
+  p_type TEXT DEFAULT 'info',
+  p_metadata JSONB DEFAULT '{}'::jsonb
+)
+RETURNS UUID
 LANGUAGE plpgsql
 AS $$
+DECLARE
+  v_notification_id UUID;
 BEGIN
-  RETURN QUERY
-  SELECT 
-    t.tier_name,
-    COUNT(t.id) AS total,
-    COUNT(t.sold_at) AS sold,
-    COUNT(t.id) - COUNT(t.sold_at) AS available
-  FROM tickets t
-  WHERE t.event_slug = $1
-  GROUP BY t.tier_name;
+  INSERT INTO notifications (user_id, message, type, metadata)
+  VALUES (p_user_id, p_message, p_type, p_metadata)
+  RETURNING id INTO v_notification_id;
+  
+  RETURN v_notification_id;
 END;
 $$;
-
--- Add more sample data as needed
-

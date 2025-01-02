@@ -1,75 +1,93 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Download } from 'lucide-react'
-import { TypedMessage } from '@/components/TypedMessage'
-import { MatrixRain } from '@/components/MatrixRain'
-import { MatrixToast } from '@/components/MatrixToast'
-import '@/styles/matrix.css'
-
-const MATRIX_QUOTES = [
-  "The Matrix has you...",
-  "Follow the white rabbit...",
-  "Knock, knock...",
-  "There is no spoon...",
-  "Free your mind...",
-  "Welcome to the desert of the real...",
-]
+import { useEffect, useState } from "react";
+import { Download } from 'lucide-react';
+import { TypedMessage } from '@/components/TypedMessage';
+import { MatrixRain } from '@/components/MatrixRain';
+import { MatrixToast } from '@/components/MatrixToast';
+import { MATRIX_QUOTES, MESSAGE_TIMINGS, MOCK_USERNAME } from '@/lib/config/matrix';
+import { useTelegram } from '@/lib/hooks/useTelegram';
+import '@/styles/matrix.css';
 
 interface MatrixPortalProps {
   username?: string;
 }
 
-export default function MatrixPortal({ username = "SALAVEY13" }: MatrixPortalProps) {
-  const [currentMessage, setCurrentMessage] = useState(0)
-  const [showContent, setShowContent] = useState(false)
-  const [currentQuote, setCurrentQuote] = useState(0)
-  const [showSmith, setShowSmith] = useState(false)
-  const [showTrinity, setShowTrinity] = useState(false)
+export default function MatrixPortal({ username }: MatrixPortalProps) {
+  const { user: tgUser, isInTelegramContext } = useTelegram();
+  const [currentMessage, setCurrentMessage] = useState(0);
+  const [showContent, setShowContent] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState(0);
+  const [showSmith, setShowSmith] = useState(false);
+  const [showTrinity, setShowTrinity] = useState(false);
+  const [quoteTimer, setQuoteTimer] = useState<NodeJS.Timeout | null>(null);
+
+  // Use Telegram username if available, fallback to prop, then mock
+  const displayName = tgUser?.username || username || MOCK_USERNAME;
 
   const messages = [
     { text: `Инициализация нейронного интерфейса...`, instant: true },
     { text: "Установление защищённого соединения с Матрицей...", instant: true },
     { text: "Обход межсетевых экранов и систем обнаружения вторжений...", instant: true },
-    { text: `${username}, ИИ эволюционировал. Теперь он понимает тебя.`, instant: false },
+    { text: `${displayName}, ИИ эволюционировал. Теперь он понимает тебя.`, instant: false },
     { text: "Расшифровка протоколов реальности... Ожидайте...", instant: true },
-    { text: `${username}, время пришло. Выбери свой путь.`, instant: false },
-];
-
+    { text: `${displayName}, время пришло. Выбери свой путь.`, instant: false },
+  ];
 
   const handleMessageComplete = () => {
     if (currentMessage < messages.length - 1) {
+      const delay = messages[currentMessage].instant ? 
+        MESSAGE_TIMINGS.MESSAGE_GAP : 
+        messages[currentMessage].text.length * MESSAGE_TIMINGS.TYPING_SPEED;
+      
       setTimeout(() => {
-        setCurrentMessage(prev => prev + 1)
-      }, messages[currentMessage].instant ? 1000 : messages[currentMessage].text.length * 130)
+        setCurrentMessage(prev => prev + 1);
+      }, delay);
     } else {
       setTimeout(() => {
-        setShowContent(true)
-        showNextQuote()
-      }, 6900)
+        setShowContent(true);
+        showNextQuote();
+      }, MESSAGE_TIMINGS.CONTENT_DELAY);
     }
-  }
+  };
 
   const showNextQuote = () => {
-    if (currentQuote < MATRIX_QUOTES.length - 1) {
-      setCurrentQuote(prev => prev + 1)
+    // Clear existing timer
+    if (quoteTimer) {
+      clearTimeout(quoteTimer);
     }
-  }
-  
+
+    if (currentQuote < MATRIX_QUOTES.length - 1) {
+      setCurrentQuote(prev => prev + 1);
+      // Set new timer for next quote
+      const timer = setTimeout(() => {
+        showNextQuote();
+      }, MESSAGE_TIMINGS.QUOTE_DURATION);
+      setQuoteTimer(timer);
+    }
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (quoteTimer) {
+        clearTimeout(quoteTimer);
+      }
+    };
+  }, [quoteTimer]);
+
   const handleRedPillClick = () => {
-    // Download the file
-    const fileUrl = 'https://github.com/salavey13/tupabase13/raw/refs/heads/main/race_to_commit_ru.bat';
+    const fileUrl = 'https://github.com/salavey13/tupabase13/blob/main/race_to_commit_ru.bat';
     const link = document.createElement('a');
     link.href = fileUrl;
-    link.download = 'race_to_commit_ru.bat'; // Set the download filename
+    link.download = 'race_to_commit_ru.bat';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
-    // Show Trinity overlay
     setShowTrinity(true);
   };
 
+  // Rest of your component remains the same...
   return (
     <div className="min-h-screen bg-black text-[#B026FF] font-mono relative crt">
       <MatrixRain />
@@ -128,7 +146,7 @@ export default function MatrixPortal({ username = "SALAVEY13" }: MatrixPortalPro
 
               {/* Red Pill Button */}
               <button 
-                onClick={handleRedPillClick}
+                onClick={() => setShowTrinity(true)}
                 className="relative group transform hover:scale-105 transition-all duration-500 md:-translate-x-8 md:-translate-y-4"
               >
                 <div className="absolute inset-0 bg-red-500/20 blur-xl group-hover:bg-red-500/30 transition-all duration-500 animate-pulse" />
@@ -170,7 +188,7 @@ export default function MatrixPortal({ username = "SALAVEY13" }: MatrixPortalPro
             <div className="text-center">
               <h2 className="text-2xl md:text-4xl font-bold mb-4 text-[#B026FF] glitch" data-text="DOWNLOAD COMPLETE">DOWNLOAD COMPLETE</h2>
               <p className="text-lg md:text-xl text-[#B026FF] mb-8">
-                {username}, файл готов. Дважды щелкни его на своем компьютере, чтобы связаться с самим Морфеусом.
+                {username}, the file is ready. Double-click it on your PC to connect with Morpheus himself.
               </p>
               <button 
                 onClick={() => setShowTrinity(false)}
@@ -186,11 +204,10 @@ export default function MatrixPortal({ username = "SALAVEY13" }: MatrixPortalPro
         <footer className="fixed bottom-0 left-0 right-0 p-4 border-t border-[#B026FF]/20 bg-black/80 backdrop-blur">
           <div className="flex justify-between items-center max-w-4xl mx-auto">
             <span className="text-[#B026FF]/50">SYSTEM.AWAKENED</span>
-            <span className="text-[#B026FF]/50">FOLLOW.SALAVEY13</span>
+            <span className="text-[#B026FF]/50">FOLLOW.THE.WHITE.RABBIT</span>
           </div>
         </footer>
       </main>
     </div>
   )
 }
-

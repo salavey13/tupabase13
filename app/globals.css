@@ -2,130 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@font-face {
+  font-family: 'Matrix Code NFI';
+  src: url('/fonts/matrix-code.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer components {
+  h1 {
+    @apply font-matrix-code text-4xl font-bold text-[#00FF41];
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+  }
+
+  .event-card {
+    @apply bg-black border border-[#00FF41] rounded-lg overflow-hidden transition-all duration-300;
+  }
+
+  .event-card:hover {
+    @apply transform scale-105;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
   }
 }
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-  }
-
-  /* Label styling */
-  .label {
-    @apply text-white text-sm font-medium mb-1.5 block;
-  }
-
-  /* Form input styling */
-  .form-input {
-    @apply bg-gray-800 border-gray-700 text-white placeholder-gray-400;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-/* Event Slider Styles */
-.slider {
-  @apply relative w-full overflow-hidden;
-  height: 100vh;
-}
-
-.slides {
-  @apply flex transition-transform duration-500 ease-in-out h-full;
-}
-
-.slide {
-  @apply w-full flex-shrink-0 relative;
-}
-
-.slide-content {
-  @apply absolute inset-0 flex flex-col justify-end p-8 text-white z-10;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
-}
-
-.slide-image {
-  @apply absolute inset-0 w-full h-full object-cover;
-}
-
-.slider-nav {
-  @apply absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20;
-}
-
-.slider-dot {
-  @apply w-3 h-3 rounded-full bg-white/50 transition-all duration-300;
-}
-
-.slider-dot.active {
-  @apply bg-white;
-}
-
-.slider-button {
-  @apply absolute top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full z-20
-         hover:bg-black/70 transition-colors duration-300;
-}
-
-.slider-button.prev {
-  @apply left-4;
-}
-
-.slider-button.next {
-  @apply right-4;
-}
+/* Import matrix theme after base styles */
+@import '../styles/matrix-theme.css';

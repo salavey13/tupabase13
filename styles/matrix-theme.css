@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .matrix-bg {
+    @apply bg-gradient-to-b from-[#0D0208] via-[rgba(0,255,65,0.1)] to-[#0D0208] bg-[length:100%_200%] animate-digitalRain;
+  }
+
+  .matrix-text {
+    @apply text-[#00FF41] font-matrix-code;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+  }
+
+  .matrix-button {
+    @apply bg-transparent border border-[#00FF41] text-[#00FF41] transition-all duration-300;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+  }
+
+  .matrix-button:hover {
+    @apply bg-[rgba(0,255,65,0.1)];
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+  }
+
+  .matrix-tabs {
+    @apply border-b border-[#00FF41];
+  }
+
+  .matrix-tab {
+    @apply text-[#00FF41] bg-transparent border-none transition-all duration-300;
+  }
+
+  .matrix-tab[data-state="active"] {
+    @apply border-b-2 border-[#00FF41];
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+  }
+
+  .matrix-tab:hover {
+    @apply bg-[rgba(0,255,65,0.1)];
+  }
+}

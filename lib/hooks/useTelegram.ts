@@ -1,11 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useApp } from '@/lib/contexts/app-context';
-import { supabase } from '@/lib/supabase';
-import type {
-  TelegramWebApp,
-  WebAppUser,
-  PopupParams,
-} from '@/types/telegram';
+import { TelegramWebApp, WebAppUser, PopupParams, ScanQrPopupParams } from '@/types/telegram';
 
 interface UseTelegramProps {
   onBackButtonPressed?: () => void;
@@ -20,37 +14,11 @@ const mockUser: WebAppUser = {
 
 export function useTelegram(props: UseTelegramProps = {}) {
   const { onBackButtonPressed } = props;
-  const { dispatch } = useApp();
   const [tg, setTg] = useState<TelegramWebApp | null>(null);
+  const [user, setUser] = useState<WebAppUser | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [webAppVersion, setWebAppVersion] = useState<number>(0);
   const [isInTelegramContext, setIsInTelegramContext] = useState(false);
-
-  const upsertUser = async (user_id: string, username: string, lang: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .upsert(
-          {
-            user_id,
-            username,
-            full_name: username || null,
-            language_code: lang,
-            status: 'free',
-            role: 'attendee',
-          },
-          { onConflict: 'user_id' }
-        )
-        .select('*')
-        .single();
-
-      if (error) throw error;
-
-      dispatch({ type: 'SET_USER', payload: data });
-    } catch (error) {
-      console.error('User upsert error:', error);
-    }
-  };
 
   const handleBackButton = useCallback(() => {
     if (onBackButtonPressed) {
@@ -61,7 +29,7 @@ export function useTelegram(props: UseTelegramProps = {}) {
   }, [onBackButtonPressed, tg, webAppVersion]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && !tg) {
+    if (typeof window !== 'undefined') {
       const scriptId = 'telegram-web-app-script';
       if (!document.getElementById(scriptId)) {
         const script = document.createElement('script');
@@ -71,22 +39,27 @@ export function useTelegram(props: UseTelegramProps = {}) {
         document.head.appendChild(script);
 
         script.onload = () => {
-          if (window.Telegram?.WebApp) {
-            const tgWebApp = window.Telegram.WebApp;
-            tgWebApp.ready();
-            setTg(tgWebApp);
-            setWebAppVersion(parseFloat(tgWebApp.version));
+          const telegram = (window as any).Telegram?.WebApp as TelegramWebApp;
+          if (telegram) {
+            telegram.ready();
+            setTg(telegram);
+            setWebAppVersion(parseFloat(telegram.version));
             setIsInTelegramContext(true);
 
-            const user = tgWebApp.initDataUnsafe?.user || mockUser;
-            const userId = user.id.toString(); // Ensure ID is a string
-            upsertUser(userId, user.username || user.first_name, user.language_code || 'en');
-            setTheme(tgWebApp.colorScheme);
+            const user = telegram.initDataUnsafe?.user || mockUser;
+            setUser(user);
+            setTheme(telegram.colorScheme);
           } else {
             setIsInTelegramContext(false);
           }
         };
       }
+    }
+  }, []);
+
+  const openLink = useCallback((url: string, options?: { try_instant_view?: boolean }) => {
+    if (tg?.openLink) {
+      tg.openLink(url, options);
     }
   }, [tg]);
 
@@ -102,7 +75,7 @@ export function useTelegram(props: UseTelegramProps = {}) {
       tg.MainButton.hide();
     }
   }, [tg]);
-  
+
   const showBackButton = useCallback(() => {
     if (tg?.BackButton && webAppVersion >= 6.1) {
       tg.BackButton.show();
@@ -133,121 +106,13 @@ export function useTelegram(props: UseTelegramProps = {}) {
     }
   }, [tg, webAppVersion]);
 
-  const setHeaderColor = useCallback((color: string) => {
-    if (tg && webAppVersion >= 6.1) {
-      tg.setHeaderColor(color);
-    }
-  }, [tg, webAppVersion]);
-
-  const setBackgroundColor = useCallback((color: string) => {
-    if (tg && webAppVersion >= 6.1) {
-      tg.setBackgroundColor(color);
-    }
-  }, [tg, webAppVersion]);
-
-  const setBottomBarColor = useCallback((color: string) => {
-    if (tg && webAppVersion >= 6.1) {
-      tg.setBottomBarColor(color);
-    }
-  }, [tg, webAppVersion]);
-
-  const enableVerticalSwipes = useCallback(() => {
-    if (tg && webAppVersion >= 6.1) {
-      tg.enableVerticalSwipes();
-    }
-  }, [tg, webAppVersion]);
-
-  const disableVerticalSwipes = useCallback(() => {
-    if (tg && webAppVersion >= 6.1) {
-      tg.disableVerticalSwipes();
-    }
-  }, [tg, webAppVersion]);
-  
-  const openLink = useCallback(
-    (url: string, options?: { try_instant_view?: boolean }) => {
-      if (tg?.openLink) {
-        tg.openLink(url, options);
-      } else {
-        console.warn('openLink is not supported in this environment.');
-      }
-    },
-    [tg]
-  );
-  
-  const openTelegramLink = useCallback(
-    (url: string) => {
-      if (tg?.openTelegramLink) {
-        tg.openTelegramLink(url);
-      } else {
-        console.warn('openTelegramLink is not supported in this environment.');
-      }
-    },
-    [tg]
-  );
-
-  const openInvoice = useCallback(
-    (url: string, callback?: (status: string) => void) => {
-      if (tg?.openInvoice) {
-        tg.openInvoice(url, callback);
-      } else {
-        console.warn('openInvoice is not supported in this environment.');
-      }
-    },
-    [tg]
-  );
-
-  const shareToStory = useCallback(
-    (mediaUrl: string, params?: { [key: string]: any }) => {
-      if (tg?.shareToStory) {
-        tg.shareToStory(mediaUrl, params);
-      } else {
-        console.warn('shareToStory is not supported in this environment.');
-           
-          
-      }
-    },
-    [tg]
-  );
-
-  const shareMessage = useCallback(
-    (msgId: string, callback?: (success: boolean) => void) => {
-      if (tg?.shareMessage) {
-        tg.shareMessage(msgId, callback);
-      } else {
-        console.warn('shareMessage is not supported in this environment.');
-      }
-    },
-    [tg]
-  );
-
-  const expand = useCallback(() => {
-    if (tg?.expand) {
-      tg.expand();
-    } else {
-      console.warn('expand is not supported in this environment.');
-    }
-  }, [tg]);
-
-  const getUserIdAsString = useCallback(() => {
-    if (tg?.initDataUnsafe?.user?.id) {
-      return tg.initDataUnsafe.user.id.toString(); // Ensure ID is a string
-    }
-    return null;
-  }, [tg]);
-  
   return {
     tg,
+    user,
     theme,
     webAppVersion,
     isInTelegramContext,
-    handleBackButton,
     openLink,
-    openTelegramLink,
-    openInvoice,
-    shareToStory,
-    shareMessage,
-    expand,
-    getUserIdAsString,
     showMainButton,
     hideMainButton,
     showBackButton,
@@ -255,10 +120,7 @@ export function useTelegram(props: UseTelegramProps = {}) {
     showPopup,
     showAlert,
     showConfirm,
-    setHeaderColor,
-    setBackgroundColor,
-    setBottomBarColor,
-    enableVerticalSwipes,
-    disableVerticalSwipes,
   };
 }
+
+export default useTelegram;
