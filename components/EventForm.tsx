@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { ImageUpload } from "@/components/ImageUpload";
 import { toast } from "sonner";
-
+import { Suspense } from "react";
 export function EventForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -113,6 +113,7 @@ export function EventForm() {
   }
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <div className="min-h-screen bg-black p-6">
       <div className="max-w-3xl mx-auto">
         <Card className="bg-gray-900/80 border-gray-800 p-6">
@@ -386,5 +387,6 @@ export function EventForm() {
         </Card>
       </div>
     </div>
+    </Suspense>
   );
 }
