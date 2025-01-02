@@ -143,7 +143,7 @@ export function ImageSelector({ onImageSelect, selectedImage, selectedEvent }: I
       <div className="flex flex-col space-y-2">
         <Label>Image</Label>
         <Button
-          variant="outline"
+          variant="default"
           onClick={() => setIsOpen(true)}
           className="w-full justify-start"
         >
@@ -166,7 +166,6 @@ export function ImageSelector({ onImageSelect, selectedImage, selectedEvent }: I
                 className="pr-20 bg-[#2C2C2E] border-0 text-white"
               />
               <Button
-                size="sm"
                 onClick={handleUrlUpload}
                 disabled={!urlInput || isUploading}
                 className="absolute right-1 top-1 h-7"
@@ -244,9 +243,8 @@ export function ImageSelector({ onImageSelect, selectedImage, selectedEvent }: I
             className="object-contain"
           />
           <Button
-            variant="destructive"
-            size="icon"
-            className="absolute right-2 top-2"
+            variant="default"
+            className="absolute right-2 top-2 h-4 w-4"
             onClick={() => {
               setImageUrl('')
               onImageSelect('')

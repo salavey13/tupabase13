@@ -9,7 +9,7 @@ interface EventDetailsProps {
   endTime: string;
   venue: {
     name: string;
-    address: string;
+    address?: string;
   };
 }
 

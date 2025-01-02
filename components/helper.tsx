@@ -185,7 +185,7 @@ export default function HelperPage() {
       </Card>
 
       {error && (
-        <Alert variant="destructive" className="mt-4">
+        <Alert variant="default" className="mt-4">
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>

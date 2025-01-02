@@ -13,6 +13,9 @@ import { TicketPurchaseDialog } from "@/components/TicketPurchaseDialog";
 import { toast } from "sonner";
 import { DbEvent } from '@/types/event';
 import { TicketSetCreation } from '@/components/TicketSetCreation'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from 'next/link'
+import { Badge } from "@/components/ui/badge";
 
 export default function EventPage() {
   const params = useParams();
@@ -26,7 +29,7 @@ export default function EventPage() {
     async function fetchEventAndValidateAccess() {
       if (!state.user) return;
 
-      const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+      const slug = Array.isArray(params?.slug) ? params?.slug[0] : params?.slug;
       if (!slug) {
         setLoading(false);
         return;
@@ -47,7 +50,7 @@ export default function EventPage() {
     }
 
     fetchEventAndValidateAccess();
-  }, [params.slug, state.user]);
+  }, [params?.slug, state.user]);
 
   if (loading) {
     return <CenteredLoading />;
@@ -109,7 +112,7 @@ export default function EventPage() {
           </Card>
 
 
-        <h2 className="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-purple-600">
+        {/*<h2 className="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-purple-600">
           Other Upcoming Events
         </h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -132,7 +135,7 @@ export default function EventPage() {
                   </p>
                   <p className="line-clamp-2 text-sm mb-4">{event.description}</p>
                   <div className="flex flex-wrap gap-2">
-                    {event.tags.slice(0, 3).map((tag, index) => (
+                    {event.tags.slice(0, 3).map((tag:string, index:number) => (
                       <Badge key={index} variant="secondary" className="text-xs">
                         {tag}
                       </Badge>
@@ -142,7 +145,7 @@ export default function EventPage() {
               </Card>
             </Link>
           ))}
-        </div>
+        </div>*/}
     </div>
   );
 }

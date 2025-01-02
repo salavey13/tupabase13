@@ -28,7 +28,7 @@ export function Leaderboard({ eventSlug }: { eventSlug: string }) {
       } else {
         const rankedData = data.map((entry, index) => ({
           ...entry,
-          username: entry.users.username,
+          username: entry.users[0]?.username,
           rank: index + 1
         }));
         setLeaderboard(rankedData);
@@ -64,7 +64,7 @@ export function Leaderboard({ eventSlug }: { eventSlug: string }) {
             {leaderboard.map((entry) => (
               <TableRow key={entry.user_id} className={entry.rank === 1 ? 'bg-green-900' : ''}>
                 <TableCell>
-                  <Badge variant="outline" className="text-green-500 border-green-500">
+                  <Badge variant="default" className="text-green-500 border-green-500">
                     {entry.rank}
                   </Badge>
                 </TableCell>

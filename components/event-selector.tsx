@@ -64,7 +64,7 @@ export function EventSelector({ onEventSelect, selectedEventSlug }: EventSelecto
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          variant="default"
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between"

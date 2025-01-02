@@ -14,10 +14,22 @@ import { CollaborativeCoding } from '@/components/CollaborativeCoding';
 import { BoltNewIntegration } from '@/components/BoltNewIntegration';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BottomSheet } from '@/components/bottom-sheet';
+import { DbEvent } from '@/types/event';
+import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation'; // Ensure you're using the correct hook
 
 export default function HomePage() {
-  const [events, setEvents] = useState([]);
-  const [redPillRacingEvent, setRedPillRacingEvent] = useState(null);
+  const [events, setEvents] = useState<DbEvent[]>([]);
+  const [redPillRacingEvent, setRedPillRacingEvent] = useState<DbEvent|null>(null);
+  // Initialize searchParams with a type that can handle both ReadonlyURLSearchParams and null
+  const [searchParams, setSearchParams] = useState<ReadonlyURLSearchParams | null>(null);
+  const params = useSearchParams();
+
+  useEffect(() => {
+    // This ensures useSearchParams is used only on the client side
+    setSearchParams(params);
+  }, [params]);
+
+  if (!searchParams) return <div>Loading...</div>;
 
   useEffect(() => {
     fetchEvents();
@@ -34,7 +46,7 @@ export default function HomePage() {
     if (error) {
       console.error('Error fetching events:', error);
     } else {
-      setEvents(data);
+      setEvents(data?data:[]);
     }
   };
 
@@ -78,13 +90,13 @@ export default function HomePage() {
                   </p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {redPillRacingEvent.tags.map((tag, index) => (
-                      <Badge key={index} variant="outline" className="text-green-300 border-green-300">
+                      <Badge key={index} variant="default" className="text-green-300 border-green-300">
                         {tag}
                       </Badge>
                     ))}
                   </div>
                   <Link href={`/events/${redPillRacingEvent.slug}`}>
-                    <Button variant="outline" className="text-green-300 border-green-300 hover:bg-green-800 p-2 rounded-lg">
+                    <Button variant="default" className="text-green-300 border-green-300 hover:bg-green-800 p-2 rounded-lg">
                       Enter the Matrix
                     </Button>
                   </Link>
@@ -148,7 +160,7 @@ export default function HomePage() {
                   <p className="line-clamp-2 text-sm mb-4 text-green-200">{event.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {event.tags.slice(0, 3).map((tag, index) => (
-                      <Badge key={index} variant="outline" className="text-green-300 border-green-300">
+                      <Badge key={index} variant="default" className="text-green-300 border-green-300">
                         {tag}
                       </Badge>
                     ))}

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Navigation } from '@/components/Navigation';
 import { AppProvider } from '@/lib/contexts/app-context';
+import { Suspense } from 'react';
 //import { ThemeProvider } from '@/components/theme-provider';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -22,10 +23,12 @@ export default function RootLayout({
       <body className={inter.className}>
         {/*<ThemeProvider attribute="class" className="pt-16"defaultTheme="dark" enableSystem>*/}
           <AppProvider>
-            <Navigation />
-            <main >
-              {children}
-            </main>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Navigation />
+              <main >
+                {children}
+              </main>
+            </Suspense>
           </AppProvider>
         {/*</ThemeProvider>*/}
       </body>

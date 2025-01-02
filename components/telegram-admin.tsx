@@ -17,7 +17,7 @@ import { FreeTicketButton } from '@/components/free-ticket-button'
 import { getEvents, Event } from '../lib/database'
 import { EventDetails } from './event-details'
 import { EventSelector } from '@/components/event-selector'
-
+import { supabase } from '@/lib/supabase';
 interface InlineButton {
   text: string
   url: string
@@ -35,7 +35,7 @@ export default function TelegramAdmin() {
   const searchParams = useSearchParams()
   const { toast } = useToast()
 
-  const token = searchParams.get('token') || "6318069842:AAHgjV87LZfrsfm3fenz2xZzDmLttPKCWK4"
+  const token = searchParams?.get('token') || "6318069842:AAHgjV87LZfrsfm3fenz2xZzDmLttPKCWK4"
 
   const addButton = () => {
     setButtons([...buttons, { text: '', url: '' }])
@@ -289,8 +289,7 @@ export default function TelegramAdmin() {
                     />
                     <Button
                       type="button"
-                      variant="destructive"
-                      size="icon"
+                      variant="default"
                       onClick={() => removeButton(index)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -303,7 +302,7 @@ export default function TelegramAdmin() {
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
               <Button
                 type="button"
-                variant="outline"
+                variant="default"
                 onClick={addButton}
                 className="w-full sm:w-auto"
               >

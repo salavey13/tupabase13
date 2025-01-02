@@ -64,7 +64,7 @@ export function TicketPurchaseDialog({
     try {
       const isValid = await validateTicketPurchase(
         event.slug,
-        state.user.telegram_id.toString()
+        state.user.user_id.toString()
       );
 
       if (!isValid) {
@@ -75,7 +75,7 @@ export function TicketPurchaseDialog({
       await purchaseTicket(
         event.slug,
         selectedTier.id,
-        state.user.telegram_id.toString()
+        state.user.user_id.toString()
       );
 
       toast.success("Ticket purchased successfully!");
@@ -117,7 +117,7 @@ export function TicketPurchaseDialog({
 
         <DialogFooter>
           <Button
-            variant="outline"
+            variant="default"
             onClick={() => onOpenChange(false)}
             className="bg-gray-800 hover:bg-gray-700"
           >

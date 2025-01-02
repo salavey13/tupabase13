@@ -31,7 +31,7 @@ export function ImageUpload({ onUpload }: ImageUploadProps) {
     <div className="flex items-center gap-4">
       <Button
         type="button"
-        variant="outline"
+        variant="default"
         className="bg-gray-800 hover:bg-gray-700 text-white"
         disabled={uploading}
       >

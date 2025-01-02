@@ -69,7 +69,7 @@ export function GameifiedDebugger({ eventSlug }: { eventSlug: string }) {
     <div className="space-y-4 p-4 bg-black text-green-500 rounded-lg border border-green-500">
       <div className="flex justify-between items-center">
         <h4 className="text-lg font-semibold">Matrix Challenge {currentChallenge + 1}</h4>
-        <Badge variant="outline" className="text-green-500">Score: {score}</Badge>
+        <Badge variant="default" className="text-green-500">Score: {score}</Badge>
       </div>
       <Progress value={(timeLeft / 300) * 100} className="h-2 bg-green-900" />
       <p className="text-sm">Time left: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</p>
@@ -82,7 +82,7 @@ export function GameifiedDebugger({ eventSlug }: { eventSlug: string }) {
       />
       <div className="flex justify-between">
         <Button onClick={handleSubmit} className="bg-green-700 hover:bg-green-600">Submit Solution</Button>
-        <Button onClick={() => setShowHint(!showHint)} variant="outline" className="text-green-500 border-green-500">
+        <Button onClick={() => setShowHint(!showHint)} variant="default" className="text-green-500 border-green-500">
           {showHint ? 'Hide Hint' : 'Show Hint'}
         </Button>
       </div>

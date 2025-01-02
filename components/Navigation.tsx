@@ -23,13 +23,13 @@ export function Navigation() {
           </Link>
           <div className="flex space-x-4">
             <Link href="/events">
-              <Button variant="ghost" className="text-white hover:text-purple-400">
+              <Button variant="matrix" className="text-white hover:text-purple-400">
                 <CalendarDays className="h-5 w-5 mr-2" />
                 Events
               </Button>
             </Link>
             <Link href="/admin/events/new">
-              <Button variant="ghost" className="text-white hover:text-purple-400">
+              <Button variant="matrix" className="text-white hover:text-purple-400">
                 <PlusCircle className="h-5 w-5 mr-2" />
                 Create Event
               </Button>

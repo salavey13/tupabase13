@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { supabase } from './supabase';
+import { TicketTier } from '@/types/database';
 
 const DIGISELLER_API_URL = 'https://api.digiseller.com/api';
 const DIGISELLER_ID = process.env.NEXT_PUBLIC_DIGISELLER_ID || '1235818';
@@ -14,7 +15,7 @@ async function getToken() {
   // Use Web Crypto API for hashing
   const encoder = new TextEncoder();
   const data = encoder.encode(`${DIGISELLER_API_KEY}${timestamp}`);
-  consthashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const sign = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
@@ -212,7 +213,7 @@ export async function syncTicketTiers(eventSlug: string) {
     }
 
     // Remove tiers from ticket_tiers that are not in events table
-    const tiersToRemove = tierData.filter(t => !eventData.ticket_tiers.some(et => et.tier === t.tier));
+    const tiersToRemove = tierData.filter(t => !eventData.ticket_tiers.some((et: { tier: TicketTier; }) => et.tier === t.tier));
     for (const tierToRemove of tiersToRemove) {
       await supabase
         .from('ticket_tiers')

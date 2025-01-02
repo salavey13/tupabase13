@@ -32,8 +32,7 @@ export function EventHeader({ title, date, imageUrl }: EventHeaderProps) {
             <p className="text-xl text-purple-400">{formattedDate}</p>
           </div>
           <Button
-            variant="outline"
-            size="icon"
+            variant="default"
             className="bg-gray-800 hover:bg-gray-700"
           >
             <Share2 className="h-4 w-4" />

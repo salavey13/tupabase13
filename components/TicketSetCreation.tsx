@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { createAndSellTickets, getDigisellerProductStats, getDigisellerWidgetCode } from '@/lib/utils/digiseller';
+import { syncTicketTiers } from '@/utils/digisellerApi';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,6 +15,7 @@ import { Progress } from "@/components/ui/progress"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface TicketTier {
+  available: number;
   tier: string;
   price: number;
   quantity: number;
@@ -30,7 +32,8 @@ interface TicketStats {
 
 export function TicketSetCreation({ eventSlug }: { eventSlug: string }) {
   const [ticketTiers, setTicketTiers] = useState<TicketTier[]>([]);
-  const [newTier, setNewTier] = useState<TicketTier>({ tier: '', price: 13, quantity: 0, perks: '' });
+  const [editingTier, setEditingTier] = useState<TicketTier | null>(null);
+  const [newTier, setNewTier] = useState<TicketTier>({ tier: '', price: 13, quantity: 0, perks: '', available: 0 });
   const [stats, setStats] = useState<TicketStats[]>([]);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [totalRevenue, setTotalRevenue] = useState<number>(0);
@@ -107,7 +110,7 @@ const updateSaleStats = (tiers: TicketTier[]) => {
     console.log('Adding new tier:', newTier);
     try {
       // Create Digiseller product
-      const { data: productData, error: productError } = await createAndSellTickets(
+      const { productId: productData, ticketIds: ticketIds } = await createAndSellTickets(
         eventSlug,
         newTier.tier,
         newTier.price,
@@ -115,7 +118,7 @@ const updateSaleStats = (tiers: TicketTier[]) => {
         newTier.perks
       );
   
-      if (productError) throw productError;
+      //if (productError) throw productError;
   
       console.log('Created Digiseller product:', productData);
   
@@ -131,7 +134,7 @@ const updateSaleStats = (tiers: TicketTier[]) => {
       await syncTicketTiers(eventSlug);
   
       setMessage({ type: 'success', text: 'New tier added successfully!' });
-      setNewTier({ tier: '', price: 0, quantity: 0, perks: '' });
+      setNewTier({ tier: '', price: 0, quantity: 0, perks: '', available: 0 });
       fetchTicketTiers();
     } catch (error) {
       console.error('Error adding new tier:', error);
@@ -318,7 +321,7 @@ const updateSaleStats = (tiers: TicketTier[]) => {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <Badge variant={stat.available > 0 ? "success" : "destructive"}>
+                          <Badge variant={stat.available > 0 ? "default" : "destructive"}>
                             {stat.available}
                           </Badge>
                         </TooltipTrigger>

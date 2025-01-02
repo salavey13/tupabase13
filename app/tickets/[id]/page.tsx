@@ -3,6 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
+interface TicketPageProps {
+  params: Promise<{ id: string }>;
+}
+
+
 async function getTicketInfo(id: string) {
   const { data, error } = await supabase
     .from('tickets')
@@ -30,8 +35,9 @@ async function getTicketInfo(id: string) {
   return data
 }
 
-export default async function TicketPage({ params }: { params: { id: string } }) {
-  const ticketInfo = await getTicketInfo(params.id)
+export default async function TicketPage({ params }: TicketPageProps) {
+  const { id } = await params;
+  const ticketInfo = await getTicketInfo(id)
 
   if (!ticketInfo) {
     return <div className="container mx-auto py-8">Ticket not found</div>
@@ -54,7 +60,7 @@ export default async function TicketPage({ params }: { params: { id: string } })
               <p><strong>Assigned to:</strong> {ticketInfo.event_ticket_user[0].users.full_name || ticketInfo.event_ticket_user[0].users.username}</p>
             )}
             <Link href={`/events/${ticketInfo.events.slug}`}>
-              <Button variant="outline">View Event</Button>
+              <Button variant="matrix">View Event</Button>
             </Link>
           </div>
         </CardContent>

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, Suspense } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { DbUser } from '@/types/event';
+import { DbEvent, DbUser } from '@/types/event';
 import useTelegram from '@/lib/hooks/useTelegram';
 import { getTicketDetails, assignTicketToUser } from '@/lib/api/tickets';
 import { getEventBySlug } from '@/lib/api/events';
@@ -18,18 +18,23 @@ interface AppState {
     event?: string;
     ref?: string;
   };
+  events: DbEvent[];
 }
 
 type Action =
   | { type: 'SET_USER'; payload: DbUser }
   | { type: 'UPDATE_USER'; payload: Partial<DbUser> }
   | { type: 'SET_INITIAL_PARAMS'; payload: AppState['initialParams'] }
+  | { type: 'SET_EVENTS'; payload: DbEvent[] }
+  | { type: 'ADD_EVENT'; payload: DbEvent }
+  | { type: 'UPDATE_EVENT'; payload: { slug: string; event: Partial<DbEvent> } }
   | { type: 'ADD_DEBUG_LOG'; payload: string };
 
 const initialState: AppState = {
   user: null,
   debugLogs: [],
   initialParams: {},
+  events: [],
 };
 
 function appReducer(state: AppState, action: Action): AppState {
@@ -44,6 +49,22 @@ function appReducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         debugLogs: [...state.debugLogs, `${new Date().toISOString()}: ${action.payload}`],
+      };
+      // Events management
+    case 'SET_EVENTS':
+      return { ...state, events: action.payload };
+
+    case 'ADD_EVENT':
+      return { ...state, events: [...state.events, action.payload] };
+
+    case 'UPDATE_EVENT':
+      return {
+        ...state,
+        events: state.events.map((event) =>
+          event.slug === action.payload.slug
+            ? { ...event, ...action.payload.event }
+            : event
+        ),
       };
     default:
       return state;
@@ -107,9 +128,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // (fetchUser, insertNewUser, handleReferral functions remain the same)
 
   return (
-    <AppContext.Provider value={{ state, dispatch, isAuthenticated }}>
-      {children}
-    </AppContext.Provider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <AppContext.Provider value={{ state, dispatch, isAuthenticated }}>
+        {children}
+      </AppContext.Provider>
+    </Suspense>
   );
 }
 

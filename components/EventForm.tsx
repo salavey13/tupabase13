@@ -368,7 +368,7 @@ export function EventForm() {
             <div className="flex justify-end space-x-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="matrix"
                 onClick={() => router.push("/events")}
                 className="bg-gray-800 hover:bg-gray-700 text-white"
               >

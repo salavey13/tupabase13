@@ -6,7 +6,9 @@ const nextConfig = {
   },
   images: { unoptimized: true },
   experimental: {
-    serverActions: true
+    serverActions: true,
+    appDir: true,
+    missingSuspenseWithCSRBailout: false,
   },
   webpack: (config) => {
     config.module.rules.push({
