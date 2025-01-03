@@ -1,0 +1,12 @@
+CREATE TABLE public.invoices (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id text NOT NULL,  -- Keep as text to match users table
+  title text NOT NULL,
+  description text NOT NULL,
+  amount integer NOT NULL,
+  ticket_uuid uuid NULL,
+  status text NOT NULL,
+  CONSTRAINT invoices_pkey PRIMARY KEY (id),
+  CONSTRAINT invoices_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id),  -- Pointing to public.users
+  CONSTRAINT invoices_ticket_uuid_fkey FOREIGN KEY (ticket_uuid) REFERENCES tickets(ticket_id)
+);
