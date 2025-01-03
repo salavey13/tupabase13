@@ -1,0 +1,61 @@
+CREATE TABLE public.invoices (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id text NOT NULL,  -- Keep as text to match users table
+  title text NOT NULL,
+  description text NOT NULL,
+  amount integer NOT NULL,
+  ticket_uuid uuid NULL,
+  status text NOT NULL,
+  CONSTRAINT invoices_pkey PRIMARY KEY (id),
+  CONSTRAINT invoices_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id),  -- Pointing to public.users
+  CONSTRAINT invoices_ticket_uuid_fkey FOREIGN KEY (ticket_uuid) REFERENCES tickets(ticket_id)
+);
+
+-- Update invoices table with new fields
+ALTER TABLE invoices 
+ADD COLUMN IF NOT EXISTS recipient_id text REFERENCES users(user_id),
+ADD COLUMN IF NOT EXISTS access_type text,
+ADD COLUMN IF NOT EXISTS access_data jsonb;
+
+-- Create index for faster queries
+CREATE INDEX IF NOT EXISTS idx_invoices_recipient_id ON invoices(recipient_id);
+
+-- Create function to notify on invoice payment
+CREATE OR REPLACE FUNCTION notify_invoice_paid()
+RETURNS trigger AS $$
+BEGIN
+    IF NEW.status = 'paid' AND OLD.status != 'paid' THEN
+        -- Insert notification logic here
+        -- For now, we'll just store it in a notifications table
+        INSERT INTO notifications (user_id, type, data)
+        VALUES (
+            NEW.user_id,
+            'invoice_paid',
+            jsonb_build_object(
+                'invoice_id', NEW.id,
+                'recipient_id', NEW.recipient_id,
+                'amount', NEW.amount
+            )
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id text REFERENCES users(user_id),
+    type text NOT NULL,
+    data jsonb,
+    read boolean DEFAULT false,
+    created_at timestamp with time zone DEFAULT now()
+);
+
+-- Create trigger for invoice payment notifications
+DROP TRIGGER IF EXISTS invoice_paid_trigger ON invoices;
+CREATE TRIGGER invoice_paid_trigger
+    AFTER UPDATE ON invoices
+    FOR EACH ROW
+    EXECUTE FUNCTION notify_invoice_paid();
+
