@@ -388,12 +388,13 @@ AS $$
 DECLARE
   v_admin_chat_id TEXT;
 BEGIN
-  -- Retrieve admin chat_id from environment variable
-  v_admin_chat_id := current_setting('app.settings.admin_chat_id', true);
+  -- Retrieve admin chat_id from environment variable on vercel side by defaul or hardcode here
+  v_admin_chat_id := '';
+    -- current_setting('app.settings.admin_chat_id', true);
   
-  IF v_admin_chat_id IS NULL THEN
+  /*IF v_admin_chat_id IS NULL THEN
     RETURN json_build_object('success', false, 'error', 'Admin chat_id not set');
-  END IF;
+  END IF;*/
 
   RETURN public.send_notification(v_admin_chat_id, p_message);
 END;
