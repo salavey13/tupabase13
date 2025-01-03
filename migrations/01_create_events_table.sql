@@ -353,7 +353,51 @@ CREATE POLICY "Users can update their own notifications"
   TO authenticated
   USING (auth.jwt() ->> 'chat_id' = user_id);
   
+ 
+
+-- Create the send_notification function
+CREATE OR REPLACE FUNCTION public.send_notification(p_chat_id TEXT, p_message TEXT)
+RETURNS json
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  v_response json;
+BEGIN
+  SELECT content::json INTO v_response
+  FROM http((
+    'POST',
+    'https://tupabase.vercel.app/api/sendTelegramNotification',
+    ARRAY[http_header('Content-Type', 'application/json')],
+    'application/json',
+    json_build_object('chat_id', p_chat_id, 'message', p_message)::text
+  )::http_request);
+
+  IF v_response->>'success' = 'true' THEN
+    RETURN json_build_object('success', true, 'message', 'Notification sent successfully');
+  ELSE
+    RETURN json_build_object('success', false, 'error', v_response->>'error');
+  END IF;
+END;
+$$;
+
+-- Create a function to send admin notification
+CREATE OR REPLACE FUNCTION public.send_admin_notification(p_message TEXT)
+RETURNS json
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  v_admin_chat_id TEXT;
+BEGIN
+  -- Retrieve admin chat_id from environment variable
+  v_admin_chat_id := current_setting('app.settings.admin_chat_id', true);
   
+  IF v_admin_chat_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Admin chat_id not set');
+  END IF;
+
+  RETURN public.send_notification(v_admin_chat_id, p_message);
+END;
+$$; 
   
 -- Create notification function
 CREATE OR REPLACE FUNCTION create_notification(
