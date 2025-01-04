@@ -100,6 +100,8 @@ CREATE TABLE tickets (
     perks text,
     is_sold boolean DEFAULT false,
     tier_id uuid REFERENCES ticket_tiers(tier_id)
+    invoice_id UUID REFERENCES invoices(id);
+
 );
 
 -- Create event_ticket_user table
@@ -849,3 +851,91 @@ CREATE TRIGGER invoice_paid_trigger
     AFTER UPDATE ON invoices
     FOR EACH ROW
     EXECUTE FUNCTION notify_invoice_paid();
+
+
+
+CREATE OR REPLACE FUNCTION create_invoice(
+  p_user_id TEXT,
+  p_event_slug TEXT,
+  p_tier TEXT
+) RETURNS UUID AS $$
+DECLARE
+  v_tier_availability INT;
+  v_sold_tickets INT;
+  v_pending_invoices INT;
+  v_invoice_id UUID;
+BEGIN
+  -- Get the total availability for the tier
+  SELECT availability INTO v_tier_availability
+  FROM ticket_tiers
+  WHERE event_slug = p_event_slug AND tier = p_tier;
+
+  -- Count sold tickets for the tier
+  SELECT COUNT(*) INTO v_sold_tickets
+  FROM tickets
+  WHERE event_slug = p_event_slug AND tier = p_tier AND is_sold = true;
+
+  -- Count pending invoices for the tier
+  SELECT COUNT(*) INTO v_pending_invoices
+  FROM invoices
+  WHERE title LIKE '%Ticket for ' || p_event_slug || '%' AND description LIKE '%Tier: ' || p_tier || '%' AND status = 'pending';
+
+  -- Check if there are tickets available
+  IF (v_tier_availability - (v_sold_tickets + v_pending_invoices)) <= 0 THEN
+    RAISE EXCEPTION 'No tickets available for the selected tier.';
+  END IF;
+
+  -- Create the invoice
+  INSERT INTO invoices (user_id, title, description, amount, status)
+  VALUES (
+    p_user_id,
+    'Ticket for ' || p_event_slug,
+    'Tier: ' || p_tier,
+    (SELECT price FROM ticket_tiers WHERE event_slug = p_event_slug AND tier = p_tier),
+    'pending'
+  )
+  RETURNING id INTO v_invoice_id;
+
+  RETURN v_invoice_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION generate_ticket_on_payment()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_ticket_id UUID;
+  v_event_slug TEXT;
+  v_tier TEXT;
+BEGIN
+  -- Trigger only when the invoice status changes to "paid"
+  IF NEW.status = 'paid' AND OLD.status != 'paid' THEN
+    -- Extract event_slug and tier from the invoice
+    SELECT
+      SPLIT_PART(NEW.title, 'Ticket for ', 2),
+      SPLIT_PART(NEW.description, 'Tier: ', 2)
+    INTO
+      v_event_slug,
+      v_tier;
+
+    -- Create the ticket
+    INSERT INTO tickets (event_slug, tier, price, perks, is_sold, invoice_id)
+    VALUES (
+      v_event_slug,
+      v_tier,
+      (SELECT price FROM ticket_tiers WHERE event_slug = v_event_slug AND tier = v_tier),
+      'Dynamically generated ticket',
+      true,
+      NEW.id
+    )
+    RETURNING ticket_id INTO v_ticket_id;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER ticket_on_payment
+AFTER UPDATE OF status ON invoices
+FOR EACH ROW
+EXECUTE FUNCTION generate_ticket_on_payment();
