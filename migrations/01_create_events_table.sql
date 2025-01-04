@@ -13,6 +13,11 @@ DROP TABLE IF EXISTS notion_sync CASCADE;
 DROP TABLE IF EXISTS notifications CASCADE;
 DROP TABLE IF EXISTS leaderboard CASCADE;
 DROP TABLE IF EXISTS invoices CASCADE;
+-- Drop existing table and functions if they exist
+DROP TABLE IF EXISTS public.memberships CASCADE;
+DROP FUNCTION IF EXISTS update_membership_level CASCADE;
+DROP FUNCTION IF EXISTS check_and_update_membership_level CASCADE;
+
 
 
 -- Enable UUID extension
@@ -151,6 +156,93 @@ CREATE TABLE sales_tracking (
     sale_amount numeric NOT NULL,
     sale_timestamp timestamp with time zone DEFAULT now()
 );
+
+-- Create memberships table
+CREATE TABLE public.memberships (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id TEXT REFERENCES public.users(user_id),
+  creator_id TEXT REFERENCES public.users(user_id),
+  tier TEXT CHECK (tier IN ('bronze', 'silver', 'gold')),
+  start_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  end_date TIMESTAMP WITH TIME ZONE,
+  successful_invoices INTEGER DEFAULT 0,
+  UNIQUE (user_id, creator_id)
+);
+
+-- Create index for faster queries
+CREATE INDEX idx_memberships_user_id ON public.memberships(user_id);
+CREATE INDEX idx_memberships_creator_id ON public.memberships(creator_id);
+
+-- RLS policies
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+
+-- Policy for users to view their own memberships
+CREATE POLICY view_own_memberships ON public.memberships
+  FOR SELECT
+  USING (auth.jwt() ->> 'chat_id' = user_id);
+
+-- Policy for creators to view memberships for their content
+CREATE POLICY view_creator_memberships ON public.memberships
+  FOR SELECT
+  USING (auth.jwt() ->> 'chat_id' = creator_id);
+
+-- Policy for users to insert their own memberships
+CREATE POLICY insert_own_membership ON public.memberships
+  FOR INSERT
+  WITH CHECK (auth.jwt() ->> 'chat_id' = user_id);
+
+-- Policy for updating own membership
+CREATE POLICY update_own_membership ON public.memberships
+  FOR UPDATE
+  USING (auth.jwt() ->> 'chat_id' = user_id);
+
+-- Function to update membership level based on successful invoices
+CREATE OR REPLACE FUNCTION update_membership_level()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Increment successful_invoices count
+  UPDATE public.memberships
+  SET successful_invoices = successful_invoices + 1
+  WHERE user_id = NEW.user_id AND creator_id = NEW.recipient_id;
+
+  -- Check and update tier based on successful_invoices count
+  UPDATE public.memberships
+  SET tier = CASE
+    WHEN successful_invoices >= 13 THEN 'gold'
+    WHEN successful_invoices >= 1 THEN 'silver'
+    ELSE 'bronze'
+  END
+  WHERE user_id = NEW.user_id AND creator_id = NEW.recipient_id;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to update membership level when an invoice is paid
+CREATE TRIGGER update_membership_on_invoice_paid
+AFTER UPDATE OF status ON public.invoices
+FOR EACH ROW
+WHEN (NEW.status = 'paid' AND OLD.status != 'paid')
+EXECUTE FUNCTION update_membership_level();
+
+-- Function to check and create/update membership when an invoice is created
+CREATE OR REPLACE FUNCTION check_and_update_membership_level()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Check if a membership exists, if not, create one
+  INSERT INTO public.memberships (user_id, creator_id, tier)
+  VALUES (NEW.user_id, NEW.recipient_id, 'bronze')
+  ON CONFLICT (user_id, creator_id) DO NOTHING;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to check and create/update membership when an invoice is created
+CREATE TRIGGER check_membership_on_invoice_created
+AFTER INSERT ON public.invoices
+FOR EACH ROW
+EXECUTE FUNCTION check_and_update_membership_level();
 
 -- Create notion sync table
 /*CREATE TABLE notion_sync (
