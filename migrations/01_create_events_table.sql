@@ -299,7 +299,8 @@ CREATE TABLE public.invoices (
   status text NOT NULL,
   recipient_id text REFERENCES users(user_id),
   access_type text,
-  access_data jsonb;
+  access_data jsonb,
+  promo_text JSONB,
   CONSTRAINT invoices_pkey PRIMARY KEY (id),
   CONSTRAINT invoices_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id),  -- Pointing to public.users
   CONSTRAINT invoices_ticket_uuid_fkey FOREIGN KEY (ticket_uuid) REFERENCES tickets(ticket_id)
