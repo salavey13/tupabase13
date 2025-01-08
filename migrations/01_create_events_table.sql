@@ -451,7 +451,6 @@ CREATE POLICY "Users can update their own notifications"
 
 -- First, ensure the pgcrypto extension is installed
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
-CREATE EXTENSION IF NOT EXISTS pg_http;
 
 -- Generate JWT Token Function
 CREATE OR REPLACE FUNCTION generate_jwt_token(user_id TEXT)
