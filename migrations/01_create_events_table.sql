@@ -448,106 +448,98 @@ CREATE POLICY "Users can update their own notifications"
   TO authenticated
   USING (auth.jwt() ->> 'chat_id' = user_id);
   
- 
 
--- Create the send_notification function
-CREATE OR REPLACE FUNCTION public.send_notification(p_chat_id TEXT, p_message TEXT)
-RETURNS json
-LANGUAGE plpgsql
-AS $$
+-- First, ensure the pgcrypto extension is installed
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS pg_http;
+
+-- Generate JWT Token Function
+CREATE OR REPLACE FUNCTION generate_jwt_token(user_id TEXT)
+RETURNS TEXT AS $$
 DECLARE
-  v_response json;
+    jwt_secret TEXT;
+    claims JSON;
+    header JSON;
+    header_base64 TEXT;
+    claims_base64 TEXT;
+    signature TEXT;
 BEGIN
-  SELECT content::json INTO v_response
-  FROM http((
-    'POST',
-    'https://tupabase.vercel.app/api/sendTelegramNotification',
-    ARRAY[http_header('Content-Type', 'application/json')],
-    'application/json',
-    json_build_object('chat_id', p_chat_id, 'message', p_message)::text
-  )::http_request);
+    -- Get the JWT secret from the database settings
+    SELECT coalesce(current_setting('app.settings.jwt_secret', true), '<hardcoded_jwt_secret_maintained_manually>')
+    INTO jwt_secret;
 
-  IF v_response->>'success' = 'true' THEN
-    RETURN json_build_object('success', true, 'message', 'Notification sent successfully');
-  ELSE
-    RETURN json_build_object('success', false, 'error', v_response->>'error');
-  END IF;
-END;
-$$;
+    -- Ensure we have a JWT secret
+    IF jwt_secret IS NULL THEN
+        RAISE EXCEPTION 'JWT secret is not set in the database settings';
+    END IF;
 
--- Create a function to send admin notification
-CREATE OR REPLACE FUNCTION public.send_admin_notification(p_message TEXT)
-RETURNS json
-LANGUAGE plpgsql
-AS $$
-DECLARE
-  v_admin_chat_id TEXT;
-BEGIN
-  -- Retrieve admin chat_id from environment variable on vercel side by defaul or hardcode here
-  v_admin_chat_id := '';
-    -- current_setting('app.settings.admin_chat_id', true);
-  
-  /*IF v_admin_chat_id IS NULL THEN
-    RETURN json_build_object('success', false, 'error', 'Admin chat_id not set');
-  END IF;*/
+    -- Create the JWT header (Base64-encoded)
+    header := json_build_object('alg', 'HS256', 'typ', 'JWT');
+    header_base64 := encode(header::text::bytea, 'base64');
 
-  RETURN public.send_notification(v_admin_chat_id, p_message);
+    -- Create the JWT claims (Base64-encoded)
+    claims := json_build_object(
+        'sub', user_id,
+        'iat', extract(epoch from now())::integer,
+        'exp', extract(epoch from (now() + interval '1 hour'))::integer
+    );
+    claims_base64 := encode(claims::text::bytea, 'base64');
+
+    -- Generate the signature
+    signature := encode(
+        pgcrypto.hmac(header_base64 || '.' || claims_base64, jwt_secret, 'sha256'),
+        'base64'
+    );
+
+    -- Return the final JWT
+    RETURN header_base64 || '.' || claims_base64 || '.' || signature;
 END;
-$$; 
-  
--- Create notification function
-CREATE OR REPLACE FUNCTION create_notification(
-  p_user_id TEXT,
-  p_message TEXT,
-  p_type TEXT DEFAULT 'info',
-  p_metadata JSONB DEFAULT '{}'::jsonb
-)
-RETURNS UUID
-LANGUAGE plpgsql
-AS $$
-DECLARE
-  v_notification_id UUID;
-BEGIN
-  INSERT INTO notifications (user_id, message, type, metadata)
-  VALUES (p_user_id, p_message, p_type, p_metadata)
-  RETURNING id INTO v_notification_id;
-  
-  RETURN v_notification_id;
-END;
-$$;
-  
-CREATE OR REPLACE FUNCTION http_post(url text, payload json)
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION http_post(url text, payload json, jwt text)
 RETURNS void AS $$
 DECLARE
     response json;
 BEGIN
     SELECT content INTO response
-    FROM http_post(url, payload::text);
+    FROM http((
+        'POST',
+        url,
+        ARRAY[http_header('Content-Type', 'application/json'), http_header('Authorization', 'Bearer ' || jwt)],
+        'application/json',
+        payload::text
+    )::http_request);
     -- You can handle the response if needed
 END;
 $$ LANGUAGE plpgsql;
 
--- Create notification function and trigger
-CREATE OR REPLACE FUNCTION notify_user()
-RETURNS TRIGGER AS $$
-BEGIN
-    -- Get the organizer_id from the event
-    DECLARE
-        organizer_slug text;
-    BEGIN
-        SELECT slug INTO organizer_slug
-        FROM organizers
-        WHERE id = NEW.organizer_id;
 
-        PERFORM http_post(
-            format('https://%s.vercel.app/api/sendTelegramNotification', organizer_slug),
-            json_build_object(
-                'chat_id', NEW.user_id,
-                'message', 'New event created: ' || NEW.title
-            )
-        );
-    END;
-    RETURN NEW;
+
+-- Notify User Function
+CREATE OR REPLACE FUNCTION notify_user(
+    user_id TEXT,
+    message TEXT
+)
+RETURNS void AS $$
+DECLARE
+    admin_chat_id TEXT;
+    jwt TEXT;
+BEGIN
+    -- Get the admin chat_id from the settings or use a default
+    SELECT coalesce(current_setting('app.settings.admin_chat_id', true), '413553377') INTO admin_chat_id;
+
+    -- Generate a JWT token
+    SELECT generate_jwt_token(user_id) INTO jwt;
+
+    -- Send the notification via HTTP
+    PERFORM http_post(
+        'https://tupabase.vercel.app/api/sendTelegramNotification',
+        json_build_object(
+            'chat_id', CASE WHEN user_id = 'admin' THEN admin_chat_id ELSE user_id END,
+            'message', message
+        ),
+        jwt
+    );
 END;
 $$ LANGUAGE plpgsql;
 
