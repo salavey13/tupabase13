@@ -355,20 +355,16 @@ ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY insert_invoice_policy ON public.invoices
 FOR INSERT
-USING (user_id = (SELECT (auth.jwt() ->> 'chat_id')::text));
-
+USING (auth.jwt() ->> 'chat_id' = user_id);
 CREATE POLICY select_invoice_policy ON public.invoices
 FOR SELECT
-USING (user_id = (SELECT (auth.jwt() ->> 'chat_id')::text));
-
+USING (auth.jwt() ->> 'chat_id' = user_id);
 CREATE POLICY update_invoice_policy ON public.invoices
 FOR UPDATE
-USING (user_id = (SELECT (auth.jwt() ->> 'chat_id')::text));
-
+USING (auth.jwt() ->> 'chat_id' = user_id);
 CREATE POLICY delete_invoice_policy ON public.invoices
 FOR DELETE
-USING (user_id = (SELECT (auth.jwt() ->> 'chat_id')::text));
-
+USING (auth.jwt() ->> 'chat_id' = user_id);
 -- Example row-level security policy for leaderboard
 CREATE POLICY "Leaderboard select policy" ON leaderboard
     FOR SELECT
