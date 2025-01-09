@@ -353,18 +353,28 @@ ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
 ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY insert_invoice_policy ON public.invoices
+-- Policy for inserting invoices
+CREATE POLICY "Users can insert invoices" ON public.invoices
 FOR INSERT
-USING (auth.jwt() ->> 'chat_id' = user_id);
-CREATE POLICY select_invoice_policy ON public.invoices
+WITH CHECK (auth.jwt() ->> 'chat_id' = user_id);
+
+-- Policy for selecting invoices
+CREATE POLICY "Users can select their own invoices" ON public.invoices
 FOR SELECT
 USING (auth.jwt() ->> 'chat_id' = user_id);
-CREATE POLICY update_invoice_policy ON public.invoices
+
+-- Policy for updating invoices
+CREATE POLICY "Users can update their own invoices" ON public.invoices
 FOR UPDATE
-USING (auth.jwt() ->> 'chat_id' = user_id);
-CREATE POLICY delete_invoice_policy ON public.invoices
+USING (auth.jwt() ->> 'chat_id' = user_id)
+WITH CHECK (auth.jwt() ->> 'chat_id' = user_id);
+
+-- Policy for deleting invoices
+CREATE POLICY "Users can delete their own invoices" ON public.invoices
 FOR DELETE
 USING (auth.jwt() ->> 'chat_id' = user_id);
+
+
 -- Example row-level security policy for leaderboard
 CREATE POLICY "Leaderboard select policy" ON leaderboard
     FOR SELECT
