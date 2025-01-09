@@ -290,27 +290,24 @@ CREATE TABLE leaderboard (
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 CREATE TABLE public.invoices (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  user_id text NOT NULL,  -- Keep as text to match users table
-  title text NOT NULL,
-  description text NOT NULL,
-  amount integer NOT NULL,
-  ticket_uuid uuid NULL,
-  status text NOT NULL,
-  recipient_id text REFERENCES users(user_id),
-  access_type text,
-  access_data jsonb,
-  promo_text JSONB,
-  CONSTRAINT invoices_pkey PRIMARY KEY (id),
-  CONSTRAINT invoices_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id),  -- Pointing to public.users
-  CONSTRAINT invoices_ticket_uuid_fkey FOREIGN KEY (ticket_uuid) REFERENCES tickets(ticket_id)
-  CONSTRAINT unique_event_user UNIQUE (event_slug, user_id);
-);
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
+    user_id text NOT NULL,  -- Reference to the user in public.users
+    title text NOT NULL,
+    description text NOT NULL,
+    amount integer NOT NULL,
+    ticket_uuid uuid NULL,  -- This can be removed if you don't want to reference tickets
+    status text NOT NULL,
+    recipient_id text NULL,  -- Reference to the recipient in public.users
+    access_type text NULL,
+    access_data jsonb NULL,
+    promo_text jsonb NULL,
+    CONSTRAINT invoices_pkey PRIMARY KEY (id),
+    CONSTRAINT invoices_recipient_id_fkey FOREIGN KEY (recipient_id) REFERENCES public.users (user_id),  -- Corrected to reference public.users
+    CONSTRAINT invoices_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users (user_id)  -- Corrected to reference public.users
+) TABLESPACE pg_default;
 
-
--- Create index for faster queries
-CREATE INDEX IF NOT EXISTS idx_invoices_recipient_id ON invoices(recipient_id);
-
+-- Create an index on recipient_id for performance
+CREATE INDEX IF NOT EXISTS idx_invoices_recipient_id ON public.invoices USING btree (recipient_id) TABLESPACE pg_default;
 
 -- Trigger to update `updated_at` automatically
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -355,6 +352,23 @@ ALTER TABLE access_control ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
 ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY insert_invoice_policy ON public.invoices
+FOR INSERT
+USING (user_id = (SELECT (auth.jwt() ->> 'chat_id')::text));
+
+CREATE POLICY select_invoice_policy ON public.invoices
+FOR SELECT
+USING (user_id = (SELECT (auth.jwt() ->> 'chat_id')::text));
+
+CREATE POLICY update_invoice_policy ON public.invoices
+FOR UPDATE
+USING (user_id = (SELECT (auth.jwt() ->> 'chat_id')::text));
+
+CREATE POLICY delete_invoice_policy ON public.invoices
+FOR DELETE
+USING (user_id = (SELECT (auth.jwt() ->> 'chat_id')::text));
+
 -- Example row-level security policy for leaderboard
 CREATE POLICY "Leaderboard select policy" ON leaderboard
     FOR SELECT
@@ -985,7 +999,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION generate_ticket_on_payment()
+/*CREATE OR REPLACE FUNCTION generate_ticket_on_payment()
 RETURNS TRIGGER AS $$
 DECLARE
   v_ticket_id UUID;
@@ -1022,4 +1036,4 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER ticket_on_payment
 AFTER UPDATE OF status ON invoices
 FOR EACH ROW
-EXECUTE FUNCTION generate_ticket_on_payment();
+EXECUTE FUNCTION generate_ticket_on_payment();*/
