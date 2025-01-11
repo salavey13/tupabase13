@@ -1,0 +1,91 @@
+digraph TelegramGamifiedSystem {
+  rankdir=TB;
+  node [shape=box, style=rounded, fontname="Arial"];
+  edge [fontname="Arial", fontsize=10];
+
+  // Core Tables and Structures
+  subgraph cluster_core {
+    label="Core Tables and Structures";
+    bgcolor="lightblue";
+
+    "Users" [label="Users\n(user_id, username, badges, role, status)"];
+    "Events" [label="Events\n(slug, title, organizer_id, date)"];
+    "Tickets" [label="Tickets\n(ticket_id, tier_id, is_sold)"];
+    "Leaderboard" [label="Leaderboard\n(user_id, score, event_slug)"];
+    "Invoices" [label="Invoices\n(user_id, amount, status, recipient_id)"];
+    "Notifications" [label="Notifications\n(user_id, message, type, read)"];
+    "Memberships" [label="Memberships\n(user_id, tier, start_date, end_date)"];
+  }
+
+  // Relationships and Data Flow
+  subgraph cluster_relationships {
+    label="Relationships and Data Flow";
+    bgcolor="lightgrey";
+
+    "UserBadgeLogic" [label="Badges\n(Update via Events, Actions)"];
+    "ScoreCalculation" [label="Score Calculation\n(Badges, Stars, Referrals)"];
+    "RealTimeSync" [label="Real-Time Updates\n(Leaderboard, Notifications)"];
+    "AccessControl" [label="Access Control\n(Ticket-Based Permissions)"];
+  }
+
+  // Gamification and Leaderboard
+  subgraph cluster_gamification {
+    label="Gamification and Leaderboard";
+    bgcolor="lightyellow";
+
+    "BadgeTriggers" [label="Badge Triggers\n(Invoices, Referrals, Engagement)"];
+    "LeaderboardLogic" [label="Leaderboard Logic\n(Global, Friends, Badges)"];
+    "CustomChallenges" [label="Custom Challenges\n(Weekly Events, Time-Limited Goals)"];
+    "RankAssignment" [label="Rank Assignment\n(Dynamic Based on Score)"];
+  }
+
+  // Commerce and Monetization
+  subgraph cluster_commerce {
+    label="Commerce and Monetization";
+    bgcolor="lightgreen";
+
+    "GamifiedPurchases" [label="Unlock Features via Badges"];
+    "DiscountsAndPerks" [label="Discounts and Perks\n(Based on Membership Tier)"];
+    "ReferralRewards" [label="Earn Rewards\n(Successful Referrals)"];
+  }
+
+  // Frontend Features
+  subgraph cluster_frontend {
+    label="Frontend Features";
+    bgcolor="lightcoral";
+
+    "DynamicUI" [label="Dynamic UI\n(Leaderboards, Notifications, Badges)"];
+    "SortingAndFiltering" [label="Sort/Filter\n(Stars, Badges, Timeframes)"];
+    "UserHighlights" [label="User Highlights\n(Current User in Leaderboard)"];
+    "ResponsiveDesign" [label="Responsive Design\n(Mobile/Desktop Friendly)"];
+  }
+
+  // Core Connections
+  "Users" -> "UserBadgeLogic" [label="Stores Badge Progress"];
+  "Users" -> "Leaderboard" [label="Tracks User Scores"];
+  "Users" -> "Invoices" [label="Initiates Commerce"];
+  "Events" -> "Tickets" [label="Generates Tickets"];
+  "Tickets" -> "AccessControl" [label="Grants Permissions"];
+  "Leaderboard" -> "RealTimeSync" [label="Updates Dynamically"];
+  "Memberships" -> "DiscountsAndPerks" [label="Grants Perks"];
+
+  // Gamification Connections
+  "UserBadgeLogic" -> "BadgeTriggers" [label="Updates on Actions"];
+  "BadgeTriggers" -> "LeaderboardLogic" [label="Adds Scores"];
+  "LeaderboardLogic" -> "RankAssignment" [label="Assigns Ranks"];
+  "LeaderboardLogic" -> "CustomChallenges" [label="Handles Challenges"];
+
+  // Monetization Connections
+  "Invoices" -> "ReferralRewards" [label="Incentivizes Sharing"];
+  "Invoices" -> "GamifiedPurchases" [label="Unlocks Features"];
+  "ReferralRewards" -> "LeaderboardLogic" [label="Adds Bonus Scores"];
+  "GamifiedPurchases" -> "DynamicUI" [label="Drives Engagement"];
+
+  // Frontend Connections
+  "DynamicUI" -> "SortingAndFiltering" [label="Improves Usability"];
+  "DynamicUI" -> "UserHighlights" [label="Focus on Current User"];
+  "DynamicUI" -> "ResponsiveDesign" [label="Mobile-Friendly"];
+  "DynamicUI" -> "LeaderboardLogic" [label="Displays Rankings"];
+  "DynamicUI" -> "UserBadgeLogic" [label="Showcase Progress"];
+  "DynamicUI" -> "Notifications" [label="Real-Time Updates"];
+}
