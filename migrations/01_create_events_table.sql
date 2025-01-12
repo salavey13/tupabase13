@@ -42,6 +42,20 @@ CREATE TABLE users (
     CONSTRAINT users_username_key UNIQUE (username),
     CONSTRAINT check_status CHECK (status = ANY (ARRAY['free'::text, 'pro'::text, 'admin'::text]))
 );
+ -- Create tips table
+CREATE TABLE IF NOT EXISTS tips (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id TEXT NOT NULL,
+  message TEXT NOT NULL,
+  amount NUMERIC NOT NULL,
+  payload TEXT UNIQUE NOT NULL,
+  tip_paid BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add index for faster lookups
+CREATE INDEX idx_tips_payload ON tips(payload);
+
 
 -- Create organizers table
 CREATE TABLE organizers (
